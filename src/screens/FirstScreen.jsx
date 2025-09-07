@@ -1,64 +1,90 @@
+// File: src/screens/firstScreen.jsx
 import React from 'react';
-import { View, StyleSheet, Pressable, Text, ScrollView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Pressable,
+  Text,
+  ScrollView,
+  Image,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing } from '../theme';
 
+// assets (same pattern as Login.js)
+const LOGO_IMAGE = require('../../assets/logo.png');
+const BG_WATERMARK = require('../../assets/background.png');
+
 export default function FirstScreen() {
   const navigation = useNavigation();
 
-  const handleBack = () => {
-    navigation.goBack();
+  const handleLogin = () => {
+    navigation.navigate('Login');
+  };
+  const handleSignUp = () => {
+    navigation.navigate('CreateAccount');
+  };
+  const handleSkip = () => {
+    navigation.navigate('Home');
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with Back Button */}
-      <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>← Back</Text>
-        </Pressable>
-      </View>
+      {/* background watermark */}
+      <Image source={BG_WATERMARK} style={styles.watermark} resizeMode="contain" />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Main Content Section */}
-        <View style={styles.contentSection}>
-          <View style={styles.heroSection}>
-            <Text style={styles.heroTitle}>Welcome to Neurula</Text>
-            <Text style={styles.heroSubtitle}>Your comprehensive health companion</Text>
-          </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* brand header */}
+        <View style={styles.brandRow}>
+          <Image source={LOGO_IMAGE} style={styles.brandLogo} resizeMode="contain" />
+        </View>
 
-          <View style={styles.featuresSection}>
-            <View style={styles.featureCard}>
-              <View style={styles.featureIcon}>
-                <Text style={styles.featureIconText}>🏥</Text>
-              </View>
-              <Text style={styles.featureTitle}>Complete Neurological Care</Text>
-              <Text style={styles.featureDescription}>
-                Access comprehensive neurological health monitoring and care tools
-              </Text>
-            </View>
+        {/* content card */}
+        <View style={styles.card}>
+          <Text style={styles.title}>Welcome to Neurula</Text>
+          <Text style={styles.subtitle}>
+            Your comprehensive healthcare{'\n'}services platform
+          </Text>
 
-            <View style={styles.featureCard}>
-              <View style={styles.featureIcon}>
-                <Text style={styles.featureIconText}>📊</Text>
-              </View>
-              <Text style={styles.featureTitle}>Health Metrics</Text>
-              <Text style={styles.featureDescription}>
-                Track your progress with detailed analytics and insights
-              </Text>
-            </View>
+          {/* primary action */}
+          <Pressable
+            style={styles.primaryBtn}
+            onPress={handleLogin}
+            android_ripple={{ color: colors.shadowGlass }}
+            accessibilityRole="button"
+            accessibilityLabel="Login"
+            testID="btn-login"
+          >
+            <Text style={styles.primaryText}>Login</Text>
+          </Pressable>
 
-            <View style={styles.featureCard}>
-              <View style={styles.featureIcon}>
-                <Text style={styles.featureIconText}>👥</Text>
-              </View>
-              <Text style={styles.featureTitle}>Expert Support</Text>
-              <Text style={styles.featureDescription}>
-                Connect with healthcare professionals when you need guidance
-              </Text>
-            </View>
-          </View>
+          {/* secondary action */}
+          <Pressable
+            style={styles.secondaryBtn}
+            onPress={handleSignUp}
+            android_ripple={{ color: colors.shadowGlass }}
+            accessibilityRole="button"
+            accessibilityLabel="Sign Up"
+            testID="btn-signup"
+          >
+            <Text style={styles.secondaryText}>Sign Up</Text>
+          </Pressable>
+
+          {/* tertiary link */}
+          <Pressable
+            onPress={handleSkip}
+            hitSlop={8}
+            accessibilityRole="link"
+            accessibilityLabel="Skip and Complete Later"
+            testID="link-skip"
+          >
+            <Text style={styles.skipLink}>Skip and Complete Later</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -66,91 +92,97 @@ export default function FirstScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
+  container: { flex: 1 },
+  watermark: {
+    position: 'absolute',
+    pointerEvents: 'none',
+    // Optional: tweak for your artwork placement
+    // right: -80,
+    // top: spacing.xl,
+    // width: 520,
+    // height: 520,
+    // opacity: 0.18,
   },
-  header: {
-    paddingHorizontal: spacing.screen.horizontal,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: spacing.borderRadius.xl,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  backButtonText: {
-    ...typography.styles.button,
-    color: colors.background,
-    fontSize: typography.fontSize.sm,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.screen.horizontal,
-  },
-  contentSection: {
-    flex: 1,
-    paddingTop: spacing.lg,
-  },
-  heroSection: {
+  scrollContent: { flexGrow: 1 },
+  brandRow: {
+    marginTop: '15%',
+    marginBottom: '15%',
     alignItems: 'center',
-    marginBottom: spacing['3xl'],
   },
-  heroTitle: {
+  brandLogo: { width: 170, height: 48 },
+
+  card: {
+    backgroundColor: colors.glassMorphism,
+    borderColor: colors.borderGradient,
+    borderWidth: 1,
+    borderTopLeftRadius: spacing.borderRadius['2xl'],
+    borderTopEndRadius: spacing.borderRadius['2xl'],
+    paddingVertical: spacing.xl,
+    paddingHorizontal: spacing.lg,
+    shadowColor: colors.shadowGlass,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 6,
+    height: '80%'
+  },
+
+  title: {
     ...typography.styles.h1,
-    color: colors.text,
-    marginBottom: spacing.md,
     textAlign: 'center',
+    color: colors.text,
+    marginBottom: spacing.xs,
   },
-  heroSubtitle: {
+  subtitle: {
     ...typography.styles.body,
     color: colors.textLight,
     textAlign: 'center',
-    lineHeight: typography.lineHeight.relaxed * typography.fontSize.base,
+    lineHeight: 20,
+    marginBottom: spacing['2xl'],
   },
-  featuresSection: {
-    gap: spacing.lg,
-  },
-  featureCard: {
-    backgroundColor: colors.backgroundLight,
-    padding: spacing.lg,
-    borderRadius: spacing.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  featureIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: spacing.borderRadius.lg,
-    backgroundColor: colors.primary + '20',
+
+  primaryBtn: {
+    height: spacing.component.buttonHeight,
+    borderRadius: spacing.borderRadius['3xl'],
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.primary,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 5,
     marginBottom: spacing.md,
   },
-  featureIconText: {
-    fontSize: 24,
+  primaryText: {
+    ...typography.styles.button,
+    color: colors.background,
   },
-  featureTitle: {
-    ...typography.styles.h3,
-    color: colors.text,
-    marginBottom: spacing.sm,
+
+  secondaryBtn: {
+    height: spacing.component.buttonHeight,
+    borderRadius: spacing.borderRadius['3xl'],
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.borderGradient,
+    shadowColor: colors.shadowGlass,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 2,
+    marginBottom: spacing.lg,
   },
-  featureDescription: {
-    ...typography.styles.bodySmall,
-    color: colors.textSecondary,
-    lineHeight: typography.lineHeight.relaxed * typography.fontSize.sm,
+  secondaryText: {
+    ...typography.styles.button,
+    color: colors.text, // or colors.primary if you prefer purple text
+  },
+
+  skipLink: {
+    ...typography.styles.body,
+    color: colors.link,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 });

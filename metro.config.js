@@ -1,25 +1,26 @@
-const { getDefaultConfig } = require('expo/metro-config');
+// metro.config.js
 const os = require('os');
-
-// Polyfill for os.availableParallelism for Node.js < 18.14.0
-if (!os.availableParallelism) {
-  os.availableParallelism = () => os.cpus().length;
+// Polyfill for older Node versions
+if (typeof os.availableParallelism !== 'function') {
+  os.availableParallelism = () => (os.cpus()?.length || 1);
 }
 
-const config = getDefaultConfig(__dirname);
+const { getDefaultConfig } = require('@expo/metro-config');
 
-config.transformer = {
-  ...config.transformer,
-  babelTransformerPath: require.resolve('react-native-svg-transformer'),
-};
+module.exports = (async () => {
+  const config = await getDefaultConfig(__dirname);
+  const { transformer, resolver } = config;
 
-config.resolver = {
-  ...config.resolver,
-  assetExts: config.resolver.assetExts.filter((ext) => ext !== 'svg'),
-  sourceExts: [...config.resolver.sourceExts, 'svg'],
-};
-
-// Explicit maxWorkers configuration to avoid issues
-config.maxWorkers = Math.max(1, Math.floor(os.cpus().length / 2));
-
-module.exports = config;
+  return {
+    ...config,
+    transformer: {
+      ...transformer,
+      babelTransformerPath: require.resolve('react-native-svg-transformer'),
+    },
+    resolver: {
+      ...resolver,
+      assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
+      sourceExts: [...resolver.sourceExts, 'svg'],
+    },
+  };
+})();
