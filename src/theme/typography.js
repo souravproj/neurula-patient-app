@@ -1,14 +1,12 @@
+export const fontFamily = {
+  regular: 'Poppins_400Regular',
+  medium: 'Poppins_500Medium',
+  bold: 'Poppins_700Bold',
+};
+
 export const typography = {
-  // Font families (you'll need to add these fonts to your project)
-  fontFamily: {
-    regular: 'System', // Default system font
-    medium: 'System', // System medium
-    bold: 'System', // System bold
-    // TODO: Replace with custom fonts if needed
-    // regular: 'YourCustomFont-Regular',
-    // medium: 'YourCustomFont-Medium', 
-    // bold: 'YourCustomFont-Bold',
-  },
+  // Font families using Poppins
+  fontFamily,
 
   // Font sizes
   fontSize: {
@@ -38,41 +36,46 @@ export const typography = {
     bold: '700',
   },
 
-  // Text styles (commonly used combinations)
+  // Text styles (commonly used combinations) with Poppins
   styles: {
     h1: {
-      fontSize: 30,
-      fontWeight: '700',
-      lineHeight: 36,
+      fontFamily: fontFamily.bold,
+      fontSize: 28,
+      lineHeight: 34,
     },
     h2: {
-      fontSize: 24,
-      fontWeight: '600',
-      lineHeight: 30,
+      fontFamily: fontFamily.bold,
+      fontSize: 22,
+      lineHeight: 28,
     },
     h3: {
+      fontFamily: fontFamily.medium,
       fontSize: 20,
-      fontWeight: '600',
       lineHeight: 26,
     },
-    body: {
+    subtitle: {
+      fontFamily: fontFamily.medium,
       fontSize: 16,
-      fontWeight: '400',
-      lineHeight: 24,
+      lineHeight: 22,
     },
-    bodySmall: {
+    body: {
+      fontFamily: fontFamily.regular,
       fontSize: 14,
-      fontWeight: '400',
       lineHeight: 20,
     },
+    bodySmall: {
+      fontFamily: fontFamily.regular,
+      fontSize: 12,
+      lineHeight: 16,
+    },
     button: {
+      fontFamily: fontFamily.medium,
       fontSize: 16,
-      fontWeight: '600',
       lineHeight: 20,
     },
     caption: {
+      fontFamily: fontFamily.regular,
       fontSize: 12,
-      fontWeight: '400',
       lineHeight: 16,
     },
   },

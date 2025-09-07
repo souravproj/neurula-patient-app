@@ -1,4 +1,3 @@
-// File: src/screens/CreateAccount.jsx
 import React from 'react';
 import {
     View,
@@ -11,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing } from '../theme';
+import { Button, Icon } from '../components';
 
 // Same asset pattern as Login.js
 const LOGO_IMAGE = require('../../assets/logo.png');
@@ -57,12 +57,14 @@ export default function CreateAccount() {
                         accessibilityLabel="Scan Emirates ID (For UAE Residents)"
                         testID="opt-emirates"
                     >
-                        <View style={styles.iconBubble}><Text style={styles.iconEmoji}>🪪</Text></View>
+                        <View style={styles.iconBubble}>
+                            <Icon name="id-card" size="small" color={colors.primary} />
+                        </View>
                         <View style={styles.optionTextWrap}>
                             <Text style={styles.optionTitle}>Scan Emirates ID</Text>
                             <Text style={styles.optionCaption}>For UAE Residents</Text>
                         </View>
-                        <Text style={styles.chevron}>›</Text>
+                        <Icon name="chevron-right" size="small" color={colors.textLight} />
                     </Pressable>
 
                     {/* Option 2 */}
@@ -74,12 +76,14 @@ export default function CreateAccount() {
                         accessibilityLabel="Scan Passport (For Non-Residents)"
                         testID="opt-passport"
                     >
-                        <View style={styles.iconBubble}><Text style={styles.iconEmoji}>🛂</Text></View>
+                        <View style={styles.iconBubble}>
+                            <Icon name="passport" size="small" color={colors.primary} />
+                        </View>
                         <View style={styles.optionTextWrap}>
                             <Text style={styles.optionTitle}>Scan Passport</Text>
                             <Text style={styles.optionCaption}>For Non-Residents</Text>
                         </View>
-                        <Text style={styles.chevron}>›</Text>
+                        <Icon name="chevron-right" size="small" color={colors.textLight} />
                     </Pressable>
 
                     {/* Option 3 */}
@@ -91,36 +95,36 @@ export default function CreateAccount() {
                         accessibilityLabel="Manual Entry (Fill your details manually)"
                         testID="opt-manual"
                     >
-                        <View style={styles.iconBubble}><Text style={styles.iconEmoji}>✍️</Text></View>
+                        <View style={styles.iconBubble}>
+                            <Icon name="edit" size="small" color={colors.primary} />
+                        </View>
                         <View style={styles.optionTextWrap}>
                             <Text style={styles.optionTitle}>Manual Entry</Text>
                             <Text style={styles.optionCaption}>Fill your details manually</Text>
                         </View>
-                        <Text style={styles.chevron}>›</Text>
+                        <Icon name="chevron-right" size="small" color={colors.textLight} />
                     </Pressable>
 
                     {/* Back CTA */}
-                    <Pressable
-                        style={styles.backButton}
+                    <Button
+                        title="Back"
                         onPress={handleBack}
-                        android_ripple={{ color: colors.shadowGlass }}
-                        accessibilityRole="button"
+                        variant="primary"
+                        leftIcon="back-arrow"
+                        style={styles.backButton}
                         accessibilityLabel="Back"
                         testID="btn-back"
-                    >
-                        <Text style={styles.backText}>Back</Text>
-                    </Pressable>
+                    />
 
                     {/* Skip link */}
-                    <Pressable
+                    <Button
+                        title="Skip and Complete Later"
                         onPress={handleSkip}
-                        hitSlop={8}
-                        accessibilityRole="link"
+                        variant="outline"
+                        style={styles.skipButton}
                         accessibilityLabel="Skip and Complete Later"
                         testID="link-skip"
-                    >
-                        <Text style={styles.skipLink}>Skip and Complete Later</Text>
-                    </Pressable>
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -200,10 +204,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.borderGradient,
     },
-    iconEmoji: { fontSize: 20, lineHeight: 22 },
     optionTextWrap: { flex: 1 },
     optionTitle: {
-        ...typography.styles.bodyStrong,
+        ...typography.styles.subtitle,
         color: colors.text,
         marginBottom: spacing.xs / 2,
     },
@@ -211,34 +214,15 @@ const styles = StyleSheet.create({
         ...typography.styles.caption,
         color: colors.textLight,
     },
-    chevron: {
-        ...typography.styles.h2,
-        color: colors.textLight,
-        marginLeft: spacing.sm,
-    },
 
     backButton: {
-        height: spacing.component.buttonHeight,
-        borderRadius: spacing.borderRadius['3xl'],
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.primary, // TODO: swap to gradient (buttonGradientStart/End) if using LinearGradient
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.25,
-        shadowRadius: 12,
-        elevation: 5,
         marginTop: spacing.lg,
         marginBottom: spacing.md,
     },
-    backText: {
-        ...typography.styles.button,
-        color: colors.background,
-    },
-    skipLink: {
-        ...typography.styles.body,
-        color: colors.link,
-        textAlign: 'center',
-        textDecorationLine: 'underline',
+    skipButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+        shadowOpacity: 0,
+        elevation: 0,
     },
 });

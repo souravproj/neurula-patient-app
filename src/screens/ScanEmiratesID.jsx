@@ -1,4 +1,3 @@
-// File: src/screens/ScanEmiratesID.jsx
 import React, { useState } from 'react';
 import {
     View,
@@ -12,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing } from '../theme';
+import { Button, Icon } from '../components';
 
 // Use a light/white logo for dark background
 // TODO: replace with your actual white logo asset
@@ -58,7 +58,7 @@ export default function ScanEmiratesID() {
                 accessibilityRole="button"
                 accessibilityLabel="Close"
             >
-                <Text style={styles.closeText}>✕</Text>
+                <Icon name="x" size="medium" color="#FFFFFF" />
             </Pressable>
 
             <ScrollView
@@ -83,24 +83,26 @@ export default function ScanEmiratesID() {
 
                 {/* Bottom sticky actions */}
                 <View style={styles.bottomSection}>
-                    <Pressable
-                        style={[styles.captureBtn, capturing && { opacity: 0.7 }]}
+                    <Button
+                        title={capturing ? "" : "Capture"}
                         onPress={handleCapture}
                         disabled={capturing}
-                        android_ripple={{ color: colors.shadowGlass }}
-                        accessibilityRole="button"
+                        variant="primary"
+                        style={[styles.captureBtn, capturing && { opacity: 0.7 }]}
                         accessibilityLabel="Capture"
                     >
-                        {capturing ? (
+                        {capturing && (
                             <ActivityIndicator size="small" color={colors.background} />
-                        ) : (
-                            <Text style={styles.captureText}>Capture</Text>
                         )}
-                    </Pressable>
+                    </Button>
 
-                    <Pressable onPress={handleManual} hitSlop={8} accessibilityRole="link">
-                        <Text style={styles.manualLink}>Enter Manually Instead</Text>
-                    </Pressable>
+                    <Button
+                        title="Enter Manually Instead"
+                        onPress={handleManual}
+                        variant="outline"
+                        style={styles.manualButton}
+                        accessibilityLabel="Enter Manually Instead"
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -118,11 +120,6 @@ const styles = StyleSheet.create({
         right: spacing.lg,
         top: spacing.lg,
         zIndex: 10,
-    },
-    closeText: {
-        fontSize: 20,
-        color: '#FFFFFF',
-        opacity: 0.9,
     },
     scrollContent: {
         flexGrow: 1,
@@ -179,26 +176,10 @@ const styles = StyleSheet.create({
         paddingBottom: spacing.screen?.bottom ?? spacing.lg,
     },
     captureBtn: {
-        height: spacing.component.buttonHeight,
-        borderRadius: spacing.borderRadius['3xl'],
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.primary, // swap to gradient if you use LinearGradient
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.25,
-        shadowRadius: 12,
-        elevation: 5,
         marginBottom: spacing.lg,
     },
-    captureText: {
-        ...typography.styles.button,
-        color: colors.background,
-    },
-    manualLink: {
-        ...typography.styles.body,
-        color: colors.link,
-        textAlign: 'center',
-        textDecorationLine: 'underline',
+    manualButton: {
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(255, 255, 255, 0.3)',
     },
 });

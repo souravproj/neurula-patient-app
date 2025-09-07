@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { View, TextInput as RNTextInput, Text, StyleSheet } from 'react-native';
+import { View, TextInput as RNTextInput, Text, StyleSheet, Pressable } from 'react-native';
 import { colors, typography, spacing } from '../theme';
+import Icon from './Icon';
 
 export default function TextInput({
   label,
   error,
-  leftIcon,
-  rightIcon,
+  leftIcon, // Now expects string icon name
+  rightIcon, // Now expects string icon name
+  leftIconColor = colors.textLight,
+  rightIconColor = colors.textLight,
+  iconSize = 'small',
+  onRightIconPress, // Handler for right icon press
   style,
   inputStyle,
   containerStyle,
@@ -33,7 +38,11 @@ export default function TextInput({
       {label && <Text style={styles.label}>{label}</Text>}
       
       <View style={[getContainerStyle(), style]}>
-        {leftIcon && <View style={styles.leftIconContainer}>{leftIcon}</View>}
+        {leftIcon && (
+          <View style={styles.leftIconContainer}>
+            <Icon name={leftIcon} size={iconSize} color={leftIconColor} />
+          </View>
+        )}
         
         <RNTextInput
           style={[styles.input, inputStyle]}
@@ -43,7 +52,15 @@ export default function TextInput({
           {...props}
         />
         
-        {rightIcon && <View style={styles.rightIconContainer}>{rightIcon}</View>}
+        {rightIcon && (
+          <Pressable 
+            style={styles.rightIconContainer}
+            onPress={onRightIconPress}
+            hitSlop={8}
+          >
+            <Icon name={rightIcon} size={iconSize} color={rightIconColor} />
+          </Pressable>
+        )}
       </View>
       
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -67,13 +84,14 @@ const styles = StyleSheet.create({
     height: spacing.component.inputHeight,
     backgroundColor: colors.backgroundLight,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.borderLight,
     borderRadius: spacing.borderRadius.md,
     paddingHorizontal: spacing.md,
   },
   containerFocused: {
     borderColor: colors.accent,
     backgroundColor: colors.background,
+    borderWidth: 2, // Make focused border slightly thicker
   },
   containerError: {
     borderColor: colors.error,

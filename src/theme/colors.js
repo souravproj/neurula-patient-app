@@ -1,8 +1,8 @@
 export const colors = {
-  // Primary colors extracted from SVGs
-  primary: '#9340C3', // Main title color from SVG
-  primaryLight: '#5A4A67',
-  primaryDark: '#2A1F35',
+  // Primary colors - Updated to brand color
+  primary: '#AD53BF', // Brand color for buttons and primary actions
+  primaryLight: '#C780D1',
+  primaryDark: '#8B2E9C',
 
   // Text colors from SVG analysis
   text: '#1A1A1A', // Main text color
@@ -17,16 +17,16 @@ export const colors = {
   glassMorphism: 'rgba(255, 255, 255, 0.6)', // Enhanced glassmorphism
   glassMorphismDark: 'rgba(255, 255, 255, 0.3)',
 
-  // Accent colors - Blue gradient for buttons
-  accent: '#007AFF', // iOS blue
-  accentLight: '#4A9EFF',
-  accentDark: '#0056CC',
-  buttonGradientStart: '#007AFF',
-  buttonGradientEnd: '#0056CC',
+  // Accent colors - Brand color for focused states
+  accent: '#AD53BF', // Brand color for focused inputs and accents
+  accentLight: '#C780D1',
+  accentDark: '#8B2E9C',
+  buttonGradientStart: '#AD53BF',
+  buttonGradientEnd: '#8B2E9C',
 
-  // UI colors
-  border: '#E1E1E1',
-  borderLight: '#F0F0F0',
+  // UI colors - Lighter, more subtle borders
+  border: '#E8E8E8',
+  borderLight: '#F5F5F5',
   borderGradient: 'rgba(255, 255, 255, 0.8)', // Glassmorphism border
   shadow: 'rgba(0, 0, 0, 0.1)',
   shadowMedium: 'rgba(0, 0, 0, 0.15)',

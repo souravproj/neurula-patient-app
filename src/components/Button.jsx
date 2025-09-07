@@ -1,6 +1,7 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
+import { Pressable, Text, StyleSheet, View } from 'react-native';
 import { colors, typography, spacing } from '../theme';
+import Icon from './Icon';
 
 export default function Button({ 
   title, 
@@ -8,6 +9,9 @@ export default function Button({
   variant = 'primary', 
   size = 'large', 
   disabled = false,
+  leftIcon,
+  rightIcon,
+  iconSize = 'small',
   style,
   textStyle,
   ...props 
@@ -60,6 +64,17 @@ export default function Button({
     return baseStyle;
   };
 
+  const getIconColor = () => {
+    switch (variant) {
+      case 'secondary':
+        return disabled ? colors.textLight : colors.background;
+      case 'outline':
+        return disabled ? colors.textLight : colors.accent;
+      default:
+        return disabled ? colors.textLight : colors.background;
+    }
+  };
+
   return (
     <Pressable
       style={[getButtonStyle(), style]}
@@ -67,7 +82,25 @@ export default function Button({
       disabled={disabled}
       {...props}
     >
-      <Text style={[getTextStyle(), textStyle]}>{title}</Text>
+      <View style={styles.buttonContent}>
+        {leftIcon && (
+          <Icon 
+            name={leftIcon} 
+            size={iconSize} 
+            color={getIconColor()}
+            style={styles.leftIcon}
+          />
+        )}
+        <Text style={[getTextStyle(), textStyle]}>{title}</Text>
+        {rightIcon && (
+          <Icon 
+            name={rightIcon} 
+            size={iconSize} 
+            color={getIconColor()}
+            style={styles.rightIcon}
+          />
+        )}
+      </View>
     </Pressable>
   );
 }
@@ -121,5 +154,16 @@ const styles = StyleSheet.create({
   },
   buttonTextDisabled: {
     color: colors.textLight,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  leftIcon: {
+    marginRight: spacing.xs,
+  },
+  rightIcon: {
+    marginLeft: spacing.xs,
   },
 });

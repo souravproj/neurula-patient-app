@@ -1,4 +1,3 @@
-// File: src/screens/Login.js
 import React, { useState } from 'react';
 import {
   View,
@@ -6,12 +5,12 @@ import {
   Pressable,
   Text,
   ScrollView,
-  TextInput,
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing } from '../theme';
+import { TextField, Button, Icon } from '../components';
 
 // Replace with your actual assets
 const LOGO_IMAGE = require('../../assets/logo.png');
@@ -23,7 +22,6 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
 
   const handleContinue = () => {
     // why: demo navigation; wire to your auth flow
@@ -57,44 +55,29 @@ export default function Login() {
           </Text>
 
           {/* Username */}
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>User name</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                value={username}
-                onChangeText={setUsername}
-                style={styles.textInput}
-                placeholder="Enter your user name"
-                placeholderTextColor={colors.textLight}
-                autoCapitalize="none"
-                keyboardType="default"
-                returnKeyType="next"
-              />
-            </View>
-          </View>
+          <TextField
+            label="User name"
+            required={true}
+            value={username}
+            onChangeText={setUsername}
+            placeholder="Enter your user name"
+            leftIcon="email"
+            autoCapitalize="none"
+            keyboardType="default"
+            returnKeyType="next"
+          />
 
           {/* Password */}
-          <View style={styles.inputWrapper}>
-            <Text style={styles.label}>Password</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                style={styles.textInput}
-                placeholder="Enter your password"
-                placeholderTextColor={colors.textLight}
-                secureTextEntry={isPasswordHidden}
-                returnKeyType="done"
-              />
-              <Pressable
-                onPress={() => setIsPasswordHidden((v) => !v)}
-                hitSlop={10}
-                style={styles.trailingIcon}
-              >
-                <Text style={styles.eye}>{isPasswordHidden ? '🙈' : '👁️'}</Text>
-              </Pressable>
-            </View>
-          </View>
+          <TextField
+            label="Password"
+            required={true}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Enter your password"
+            leftIcon="lock"
+            secure={true}
+            returnKeyType="done"
+          />
 
           {/* Options row */}
           <View style={styles.optionsRow}>
@@ -104,7 +87,9 @@ export default function Login() {
               hitSlop={8}
             >
               <View style={[styles.checkbox, rememberMe && styles.checkboxChecked]}>
-                {rememberMe ? <Text style={styles.checkboxTick}>✓</Text> : null}
+                {rememberMe ? (
+                  <Icon name="check" size={12} color={colors.background} />
+                ) : null}
               </View>
               <Text style={styles.rememberText}>Remember me</Text>
             </Pressable>
@@ -115,9 +100,12 @@ export default function Login() {
           </View>
           {/* Bottom sticky Login + Create account */}
           <View style={styles.bottomSection}>
-            <Pressable style={styles.loginButton} onPress={handleContinue} android_ripple={{ color: colors.shadowGlass }}>
-              <Text style={styles.buttonText}>Log in</Text>
-            </Pressable>
+            <Button 
+              title="Log in" 
+              onPress={handleContinue}
+              variant="primary"
+              style={styles.loginButton}
+            />
             <View style={styles.createRow}>
               <Text style={styles.newText}>New to Neurula </Text>
               <Pressable onPress={handleCreate} hitSlop={8}>
@@ -186,45 +174,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: 'center',
   },
-  inputWrapper: {
-    marginBottom: spacing.md,
-  },
-  label: {
-    ...typography.styles.caption,
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  inputContainer: {
-    position: 'relative',
-  },
-  textInput: {
-    height: spacing.component.inputHeight,
-    backgroundColor: colors.glassMorphism,
-    borderWidth: 1,
-    borderColor: colors.borderGradient,
-    borderRadius: spacing.borderRadius.md,
-    paddingHorizontal: spacing.md,
-    fontSize: typography.fontSize.base,
-    color: colors.text,
-    shadowColor: colors.shadowGlass,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  trailingIcon: {
-    position: 'absolute',
-    right: spacing.sm,
-    top: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xs,
-  },
-  eye: {
-    fontSize: 18,
-    opacity: 0.8,
-  },
   optionsRow: {
     marginTop: spacing.sm,
     marginBottom: spacing.xs,
@@ -250,11 +199,6 @@ const styles = StyleSheet.create({
   checkboxChecked: {
     backgroundColor: colors.buttonGradientStart,
   },
-  checkboxTick: {
-    fontSize: 12,
-    color: colors.background,
-    lineHeight: 12,
-  },
   rememberText: {
     ...typography.styles.body,
     color: colors.text,
@@ -271,20 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   loginButton: {
-    height: spacing.component.buttonHeight,
-    borderRadius: spacing.borderRadius['3xl'],
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 5,
-    backgroundColor: colors.primary,
-  },
-  buttonText: {
-    ...typography.styles.button,
-    color: colors.background,
+    marginBottom: spacing.lg,
   },
   createRow: {
     marginTop: spacing.lg,

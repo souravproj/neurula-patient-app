@@ -1,9 +1,7 @@
-// File: src/screens/firstScreen.jsx
 import React from 'react';
 import {
   View,
   StyleSheet,
-  Pressable,
   Text,
   ScrollView,
   Image,
@@ -11,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing } from '../theme';
+import { Button } from '../components';
 
 // assets (same pattern as Login.js)
 const LOGO_IMAGE = require('../../assets/logo.png');
@@ -52,39 +51,34 @@ export default function FirstScreen() {
           </Text>
 
           {/* primary action */}
-          <Pressable
-            style={styles.primaryBtn}
+          <Button
+            title="Login"
             onPress={handleLogin}
-            android_ripple={{ color: colors.shadowGlass }}
-            accessibilityRole="button"
+            variant="primary"
+            style={styles.primaryBtn}
             accessibilityLabel="Login"
             testID="btn-login"
-          >
-            <Text style={styles.primaryText}>Login</Text>
-          </Pressable>
+          />
 
           {/* secondary action */}
-          <Pressable
-            style={styles.secondaryBtn}
+          <Button
+            title="Sign Up"
             onPress={handleSignUp}
-            android_ripple={{ color: colors.shadowGlass }}
-            accessibilityRole="button"
+            variant="outline"
+            style={styles.secondaryBtn}
             accessibilityLabel="Sign Up"
             testID="btn-signup"
-          >
-            <Text style={styles.secondaryText}>Sign Up</Text>
-          </Pressable>
+          />
 
           {/* tertiary link */}
-          <Pressable
+          <Button
+            title="Skip and Complete Later"
             onPress={handleSkip}
-            hitSlop={8}
-            accessibilityRole="link"
+            variant="outline"
+            style={styles.skipButton}
             accessibilityLabel="Skip and Complete Later"
             testID="link-skip"
-          >
-            <Text style={styles.skipLink}>Skip and Complete Later</Text>
-          </Pressable>
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -142,47 +136,17 @@ const styles = StyleSheet.create({
   },
 
   primaryBtn: {
-    height: spacing.component.buttonHeight,
-    borderRadius: spacing.borderRadius['3xl'],
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.primary,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 5,
     marginBottom: spacing.md,
-  },
-  primaryText: {
-    ...typography.styles.button,
-    color: colors.background,
   },
 
   secondaryBtn: {
-    height: spacing.component.buttonHeight,
-    borderRadius: spacing.borderRadius['3xl'],
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.borderGradient,
-    shadowColor: colors.shadowGlass,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 2,
     marginBottom: spacing.lg,
   },
-  secondaryText: {
-    ...typography.styles.button,
-    color: colors.text, // or colors.primary if you prefer purple text
-  },
 
-  skipLink: {
-    ...typography.styles.body,
-    color: colors.link,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
+  skipButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    shadowOpacity: 0,
+    elevation: 0,
   },
 });
