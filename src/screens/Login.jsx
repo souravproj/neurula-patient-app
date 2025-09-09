@@ -100,8 +100,8 @@ export default function Login() {
           </View>
           {/* Bottom sticky Login + Create account */}
           <View style={styles.bottomSection}>
-            <Button 
-              title="Log in" 
+            <Button
+              title="Log in"
               onPress={handleContinue}
               variant="primary"
               style={styles.loginButton}
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 6,
-    // height: '100%'
+    height: '100%'
   },
   title: {
     ...typography.styles.h1,

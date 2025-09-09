@@ -85,9 +85,9 @@ export default function ManualEntry() {
     };
 
     const onComplete = () => {
-        if (!validate()) return;
+        // if (!validate()) return;
         // TODO: replace with API call; for now navigate with payload
-        navigation.navigate('RegistrationReview', {
+        navigation.navigate('OtpVerification', {
             form: {
                 fullName, dob: dobText, nationality, emiratesId, height, weight, medical,
                 contact, emirate, address, locationPin, email,
@@ -149,10 +149,10 @@ export default function ManualEntry() {
 
             let location = await Location.getCurrentPositionAsync({});
             const { latitude, longitude } = location.coords;
-            
+
             // Get address from coordinates
             let address = await Location.reverseGeocodeAsync({ latitude, longitude });
-            
+
             if (address.length > 0) {
                 const addr = address[0];
                 const locationString = `${addr.street || ''} ${addr.city || ''} ${addr.region || ''}`;
@@ -215,7 +215,7 @@ export default function ManualEntry() {
                             rightIcon="calendar"
                             onRightIconPress={showDatepicker}
                         />
-                        
+
                         {/* Custom Date Picker Modal */}
                         <Modal
                             visible={showDatePicker}
@@ -226,7 +226,7 @@ export default function ManualEntry() {
                             <View style={styles.modalOverlay}>
                                 <View style={styles.modalContent}>
                                     <Text style={styles.modalTitle}>Select Date of Birth</Text>
-                                    
+
                                     <View style={styles.datePickerContainer}>
                                         {/* Year Picker */}
                                         <View style={styles.pickerColumn}>
@@ -249,7 +249,7 @@ export default function ManualEntry() {
                                                 ))}
                                             </ScrollView>
                                         </View>
-                                        
+
                                         {/* Month Picker */}
                                         <View style={styles.pickerColumn}>
                                             <Text style={styles.pickerLabel}>Month</Text>
@@ -271,7 +271,7 @@ export default function ManualEntry() {
                                                 ))}
                                             </ScrollView>
                                         </View>
-                                        
+
                                         {/* Day Picker */}
                                         <View style={styles.pickerColumn}>
                                             <Text style={styles.pickerLabel}>Day</Text>
@@ -298,16 +298,16 @@ export default function ManualEntry() {
                                             </ScrollView>
                                         </View>
                                     </View>
-                                    
+
                                     <View style={styles.modalButtons}>
-                                        <TouchableOpacity 
-                                            style={[styles.modalButton, styles.cancelButton]} 
+                                        <TouchableOpacity
+                                            style={[styles.modalButton, styles.cancelButton]}
                                             onPress={() => setShowDatePicker(false)}
                                         >
                                             <Text style={styles.cancelButtonText}>Cancel</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity 
-                                            style={[styles.modalButton, styles.confirmButton]} 
+                                        <TouchableOpacity
+                                            style={[styles.modalButton, styles.confirmButton]}
                                             onPress={confirmDateSelection}
                                         >
                                             <Text style={styles.confirmButtonText}>Confirm</Text>
@@ -336,7 +336,7 @@ export default function ManualEntry() {
                         onChangeText={setEmiratesId}
                         placeholder="784-XXX-XXXXXX-X"
                         rightIcon="search"
-                        onRightIconPress={() => {/* TODO: Add search functionality */}}
+                        onRightIconPress={() => {/* TODO: Add search functionality */ }}
                         keyboardType="numeric"
                         helperText="Must start with 784 and be 15 digits total"
                         error={errors.emiratesId}
@@ -483,11 +483,11 @@ const styles = StyleSheet.create({
         // paddingBottom: spacing.md,
     },
     backBtn: { paddingRight: spacing.md, paddingVertical: spacing.xs },
-    backIcon: { 
-        fontSize: 28, 
+    backIcon: {
+        fontSize: 28,
         fontFamily: 'Poppins_400Regular',
-        color: colors.text, 
-        opacity: 0.9 
+        color: colors.text,
+        opacity: 0.9
     },
     brandLogo: { width: 150, height: 40, marginLeft: 'auto', marginRight: 'auto', marginTop: '15%', marginBottom: '15%' },
 

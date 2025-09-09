@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.15,
         shadowRadius: 20,
         elevation: 6,
+        height: '100%'
     },
 
     title: {

@@ -6,6 +6,7 @@ import FirstScreen from '../screens/FirstScreen';
 import CreateAccount from '../screens/createAccount';
 import ScanEmiratesID from '../screens/ScanEmiratesID';
 import ManualEntry from '../screens/ManualEntry';
+import OtpVerification from '../screens/OtpVerification';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,11 +18,12 @@ export default function AppNavigator() {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="FirstScreen" component={FirstScreen} />
+        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name="ScanEmiratesID" component={ScanEmiratesID} />
         <Stack.Screen name="ManualEntry" component={ManualEntry} />
+        <Stack.Screen name="OtpVerification" component={OtpVerification} />
       </Stack.Navigator>
     </NavigationContainer>
   );
