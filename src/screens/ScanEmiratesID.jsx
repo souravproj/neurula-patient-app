@@ -18,6 +18,7 @@ export default function ScanEmiratesID() {
     const navigation = useNavigation();
     const [hasPermission, setHasPermission] = useState(null);
     const [capturing, setCapturing] = useState(false);
+    const [processing, setProcessing] = useState(false);
     const [cameraReady, setCameraReady] = useState(false);
     const cameraRef = useRef(null);
 
@@ -42,11 +43,12 @@ export default function ScanEmiratesID() {
 
     // Handle camera capture
     const handleCapture = async () => {
-        if (!cameraReady || capturing || !cameraRef.current) {
+        if (!cameraReady || capturing || processing || !cameraRef.current) {
             return;
         }
 
         try {
+            // Phase 1: Capturing
             setCapturing(true);
             
             // Take picture
@@ -57,6 +59,13 @@ export default function ScanEmiratesID() {
             });
 
             if (photo && photo.uri) {
+                // Phase 2: Processing
+                setCapturing(false);
+                setProcessing(true);
+                
+                // Simulate OCR processing delay
+                await new Promise(resolve => setTimeout(resolve, 2500));
+                
                 // Navigate to OCR Review with the captured image
                 navigation.navigate('OCRReview', {
                     source: 'emirates-id',
@@ -77,6 +86,7 @@ export default function ScanEmiratesID() {
             Alert.alert('Error', 'Failed to capture photo. Please try again.');
         } finally {
             setCapturing(false);
+            setProcessing(false);
         }
     };
 
@@ -198,22 +208,31 @@ export default function ScanEmiratesID() {
                         {/* Bottom section with controls */}
                         <View style={styles.bottomSection}>
                             <Text style={styles.helperText}>
-                                Make sure your Emirates ID is clearly visible and well-lit
+                                {processing 
+                                    ? "Processing Emirates ID..." 
+                                    : capturing 
+                                        ? "Capturing Emirates ID..." 
+                                        : "Make sure your Emirates ID is clearly visible and well-lit"
+                                }
                             </Text>
 
                             <View style={styles.controls}>
-                                <Button
-                                    title={capturing ? "" : "Capture"}
+                                <Pressable
                                     onPress={handleCapture}
-                                    disabled={capturing || !cameraReady}
-                                    variant="primary"
-                                    style={[styles.captureBtn, (capturing || !cameraReady) && { opacity: 0.7 }]}
-                                    accessibilityLabel="Capture Emirates ID"
+                                    disabled={capturing || processing || !cameraReady}
+                                    style={[styles.captureBtn, (capturing || processing || !cameraReady) && styles.captureBtnDisabled]}
+                                    android_ripple={{ color: colors.shadowGlass }}
+                                    accessibilityRole="button"
+                                    accessibilityLabel={processing ? "Processing Emirates ID" : "Capture Emirates ID"}
                                 >
-                                    {capturing && (
+                                    {(capturing || processing) ? (
                                         <ActivityIndicator size="small" color={colors.background} />
+                                    ) : (
+                                        <Text style={[styles.captureText, (capturing || processing || !cameraReady) && { opacity: 0.7 }]}>
+                                            Capture
+                                        </Text>
                                     )}
-                                </Button>
+                                </Pressable>
 
                                 <Button
                                     title="Enter Manually"
@@ -383,6 +402,23 @@ const styles = StyleSheet.create({
     captureBtn: {
         height: 56,
         borderRadius: spacing.borderRadius['3xl'],
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.primary,
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 5,
+        width: '100%',
+    },
+    captureBtnDisabled: {
+        backgroundColor: colors.primary,
+        opacity: 0.6,
+    },
+    captureText: {
+        ...typography.styles.button,
+        color: colors.background,
     },
     manualButton: {
         backgroundColor: 'transparent',
