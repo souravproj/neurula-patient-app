@@ -6,9 +6,14 @@ import {
     Text,
     ScrollView,
     Image,
+    Alert,
+    Platform,
+    Modal,
+    TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import * as Location from 'expo-location';
 import { colors, typography, spacing } from '../theme';
 import { TextField, FieldDropdown, Button } from '../components';
 
@@ -31,7 +36,9 @@ export default function ManualEntry() {
 
     // form state
     const [fullName, setFullName] = useState('');
-    const [dob, setDob] = useState(''); // TODO: wire native date picker
+    const [dob, setDob] = useState(new Date());
+    const [dobText, setDobText] = useState('');
+    const [showDatePicker, setShowDatePicker] = useState(false);
     const [nationality, setNationality] = useState('');
     const [emiratesId, setEmiratesId] = useState('');
     const [height, setHeight] = useState('');
@@ -41,6 +48,7 @@ export default function ManualEntry() {
     const [emirate, setEmirate] = useState('');
     const [address, setAddress] = useState('');
     const [locationPin, setLocationPin] = useState('');
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [email, setEmail] = useState('');
 
 
@@ -49,22 +57,26 @@ export default function ManualEntry() {
 
     const required = useMemo(
         () => ({
-            fullName, dob, nationality, contact, emirate, address, locationPin, email,
+            fullName, dob: dobText, nationality, contact, emirate, address, locationPin, email,
         }),
-        [fullName, dob, nationality, contact, emirate, address, locationPin, email]
+        [fullName, dobText, nationality, contact, emirate, address, locationPin, email]
     );
 
     const validate = () => {
         const e = {};
         if (!fullName.trim()) e.fullName = 'Full name is required';
-        if (!dob.trim()) e.dob = 'Date of birth is required';
+        if (!dobText.trim()) e.dob = 'Date of birth is required';
         if (!nationality.trim()) e.nationality = 'Select nationality';
+        // Emirates ID validation - must start with 784 and be 15 digits total
+        if (emiratesId && !/^784\d{12}$/.test(emiratesId)) {
+            e.emiratesId = 'Emirates ID must start with 784 and be 15 digits total';
+        }
         if (!contact.trim()) e.contact = 'Contact is required';
         if (!emirate.trim()) e.emirate = 'Select emirate';
         if (!address.trim()) e.address = 'Address is required';
         if (!locationPin.trim()) e.locationPin = 'Location pin is required';
         if (!email.trim()) e.email = 'Email is required';
-        // tiny email check
+        // Enhanced email validation
         if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Enter a valid email';
         // phone numeric check
         if (contact && !/^[\d+\-\s()]{6,20}$/.test(contact)) e.contact = 'Enter a valid number';
@@ -77,7 +89,7 @@ export default function ManualEntry() {
         // TODO: replace with API call; for now navigate with payload
         navigation.navigate('RegistrationReview', {
             form: {
-                fullName, dob, nationality, emiratesId, height, weight, medical,
+                fullName, dob: dobText, nationality, emiratesId, height, weight, medical,
                 contact, emirate, address, locationPin, email,
             },
         });
@@ -85,6 +97,75 @@ export default function ManualEntry() {
 
     const onCancel = () => navigation.goBack();
     const onSkip = () => navigation.navigate('Home');
+
+    // Date picker handler
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    };
+
+    const onDateSelect = (selectedDate) => {
+        setDob(selectedDate);
+        setDobText(formatDate(selectedDate));
+        setShowDatePicker(false);
+    };
+
+    const showDatepicker = () => {
+        setShowDatePicker(true);
+    };
+
+    // Generate date options for picker
+    const generateDateOptions = () => {
+        const currentYear = new Date().getFullYear();
+        const years = [];
+        for (let i = currentYear; i >= currentYear - 100; i--) {
+            years.push(i);
+        }
+        const months = Array.from({ length: 12 }, (_, i) => i + 1);
+        const days = Array.from({ length: 31 }, (_, i) => i + 1);
+        return { years, months, days };
+    };
+
+    const { years, months, days } = generateDateOptions();
+    const [selectedYear, setSelectedYear] = useState(dob.getFullYear());
+    const [selectedMonth, setSelectedMonth] = useState(dob.getMonth() + 1);
+    const [selectedDay, setSelectedDay] = useState(dob.getDate());
+
+    const confirmDateSelection = () => {
+        const newDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
+        onDateSelect(newDate);
+    };
+
+    // Location handler
+    const getCurrentLocation = async () => {
+        try {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permission Denied', 'Permission to access location was denied');
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            const { latitude, longitude } = location.coords;
+            
+            // Get address from coordinates
+            let address = await Location.reverseGeocodeAsync({ latitude, longitude });
+            
+            if (address.length > 0) {
+                const addr = address[0];
+                const locationString = `${addr.street || ''} ${addr.city || ''} ${addr.region || ''}`;
+                setLocationPin(locationString.trim());
+                setCurrentLocation({ latitude, longitude });
+            } else {
+                setLocationPin(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+                setCurrentLocation({ latitude, longitude });
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to get current location');
+        }
+    };
 
 
     return (
@@ -123,15 +204,119 @@ export default function ManualEntry() {
                     />
 
                     {/* Date of Birth */}
-                    <TextField
-                        label="Date of Birth"
-                        required={true}
-                        value={dob}
-                        onChangeText={setDob}
-                        placeholder="yyyy / mm / dd"
-                        error={errors.dob}
-                        // TODO: Add date picker functionality - will need custom rightIcon slot
-                    />
+                    <View>
+                        <TextField
+                            label="Date of Birth"
+                            required={true}
+                            value={dobText}
+                            onChangeText={setDobText}
+                            placeholder="yyyy / mm / dd"
+                            error={errors.dob}
+                            rightIcon="calendar"
+                            onRightIconPress={showDatepicker}
+                        />
+                        
+                        {/* Custom Date Picker Modal */}
+                        <Modal
+                            visible={showDatePicker}
+                            animationType="slide"
+                            transparent={true}
+                            onRequestClose={() => setShowDatePicker(false)}
+                        >
+                            <View style={styles.modalOverlay}>
+                                <View style={styles.modalContent}>
+                                    <Text style={styles.modalTitle}>Select Date of Birth</Text>
+                                    
+                                    <View style={styles.datePickerContainer}>
+                                        {/* Year Picker */}
+                                        <View style={styles.pickerColumn}>
+                                            <Text style={styles.pickerLabel}>Year</Text>
+                                            <ScrollView style={styles.pickerScroll} showsVerticalScrollIndicator={false}>
+                                                {years.map(year => (
+                                                    <TouchableOpacity
+                                                        key={year}
+                                                        style={[
+                                                            styles.pickerItem,
+                                                            selectedYear === year && styles.selectedPickerItem
+                                                        ]}
+                                                        onPress={() => setSelectedYear(year)}
+                                                    >
+                                                        <Text style={[
+                                                            styles.pickerItemText,
+                                                            selectedYear === year && styles.selectedPickerItemText
+                                                        ]}>{year}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                        
+                                        {/* Month Picker */}
+                                        <View style={styles.pickerColumn}>
+                                            <Text style={styles.pickerLabel}>Month</Text>
+                                            <ScrollView style={styles.pickerScroll} showsVerticalScrollIndicator={false}>
+                                                {months.map(month => (
+                                                    <TouchableOpacity
+                                                        key={month}
+                                                        style={[
+                                                            styles.pickerItem,
+                                                            selectedMonth === month && styles.selectedPickerItem
+                                                        ]}
+                                                        onPress={() => setSelectedMonth(month)}
+                                                    >
+                                                        <Text style={[
+                                                            styles.pickerItemText,
+                                                            selectedMonth === month && styles.selectedPickerItemText
+                                                        ]}>{month.toString().padStart(2, '0')}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                        
+                                        {/* Day Picker */}
+                                        <View style={styles.pickerColumn}>
+                                            <Text style={styles.pickerLabel}>Day</Text>
+                                            <ScrollView style={styles.pickerScroll} showsVerticalScrollIndicator={false}>
+                                                {days.map(day => {
+                                                    const maxDays = new Date(selectedYear, selectedMonth, 0).getDate();
+                                                    if (day > maxDays) return null;
+                                                    return (
+                                                        <TouchableOpacity
+                                                            key={day}
+                                                            style={[
+                                                                styles.pickerItem,
+                                                                selectedDay === day && styles.selectedPickerItem
+                                                            ]}
+                                                            onPress={() => setSelectedDay(day)}
+                                                        >
+                                                            <Text style={[
+                                                                styles.pickerItemText,
+                                                                selectedDay === day && styles.selectedPickerItemText
+                                                            ]}>{day.toString().padStart(2, '0')}</Text>
+                                                        </TouchableOpacity>
+                                                    );
+                                                })}
+                                            </ScrollView>
+                                        </View>
+                                    </View>
+                                    
+                                    <View style={styles.modalButtons}>
+                                        <TouchableOpacity 
+                                            style={[styles.modalButton, styles.cancelButton]} 
+                                            onPress={() => setShowDatePicker(false)}
+                                        >
+                                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity 
+                                            style={[styles.modalButton, styles.confirmButton]} 
+                                            onPress={confirmDateSelection}
+                                        >
+                                            <Text style={styles.confirmButtonText}>Confirm</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
 
                     {/* Nationality (dropdown) */}
                     <FieldDropdown
@@ -152,8 +337,9 @@ export default function ManualEntry() {
                         placeholder="784-XXX-XXXXXX-X"
                         rightIcon="search"
                         onRightIconPress={() => {/* TODO: Add search functionality */}}
-                        keyboardType="default"
-                        helperText="We'll verify this with UAE database"
+                        keyboardType="numeric"
+                        helperText="Must start with 784 and be 15 digits total"
+                        error={errors.emiratesId}
                     />
 
                     {/* Height / Weight */}
@@ -230,8 +416,9 @@ export default function ManualEntry() {
                         onChangeText={setLocationPin}
                         placeholder="Add location pin"
                         rightIcon="map-pin"
-                        onRightIconPress={() => {/* TODO: Add location picker functionality */}}
+                        onRightIconPress={getCurrentLocation}
                         error={errors.locationPin}
+                        helperText="Tap pin icon to get current location"
                     />
 
                     {/* Map preview placeholder */}
@@ -325,7 +512,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_700Bold',
         fontSize: 28,
         lineHeight: 36,
-        textAlign: 'left',
+        textAlign: 'center',
         color: colors.text,
         marginBottom: spacing.xs,
     },
@@ -333,6 +520,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_400Regular',
         fontSize: 16,
         lineHeight: 24,
+        textAlign: 'center',
         color: colors.textLight,
         marginBottom: spacing.lg,
     },
@@ -380,6 +568,97 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         textDecorationLine: 'underline',
         marginTop: spacing.lg,
+    },
+
+    // Date picker modal styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 20,
+        width: '90%',
+        maxWidth: 400,
+        maxHeight: '80%',
+    },
+    modalTitle: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 18,
+        textAlign: 'center',
+        marginBottom: 20,
+        color: colors.text,
+    },
+    datePickerContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    pickerColumn: {
+        flex: 1,
+        marginHorizontal: 5,
+    },
+    pickerLabel: {
+        fontFamily: 'Poppins_500Medium',
+        fontSize: 14,
+        textAlign: 'center',
+        marginBottom: 10,
+        color: colors.text,
+    },
+    pickerScroll: {
+        maxHeight: 200,
+        borderWidth: 1,
+        borderColor: '#E5E7EB',
+        borderRadius: 8,
+    },
+    pickerItem: {
+        paddingVertical: 12,
+        paddingHorizontal: 8,
+        alignItems: 'center',
+    },
+    selectedPickerItem: {
+        backgroundColor: '#A855F7',
+    },
+    pickerItemText: {
+        fontFamily: 'Poppins_400Regular',
+        fontSize: 14,
+        color: colors.text,
+    },
+    selectedPickerItemText: {
+        color: 'white',
+        fontFamily: 'Poppins_600SemiBold',
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    modalButton: {
+        flex: 1,
+        paddingVertical: 12,
+        borderRadius: 8,
+        marginHorizontal: 5,
+        alignItems: 'center',
+    },
+    cancelButton: {
+        backgroundColor: '#F3F4F6',
+        borderWidth: 1,
+        borderColor: '#D1D5DB',
+    },
+    confirmButton: {
+        backgroundColor: '#A855F7',
+    },
+    cancelButtonText: {
+        fontFamily: 'Poppins_500Medium',
+        fontSize: 14,
+        color: colors.text,
+    },
+    confirmButtonText: {
+        fontFamily: 'Poppins_500Medium',
+        fontSize: 14,
+        color: 'white',
     },
 
 });
