@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing } from '../theme';
 
 // Soft background art (same pattern as other screens)
@@ -21,6 +22,7 @@ const AVATAR_3 = require('../../assets/logo3.png');
 
 export default function Home() {
     const navigation = useNavigation();
+    const insets = useSafeAreaInsets();
 
     const services = [
         { key: 'consult', label: 'Doctor Consultation', icon: '🩺', onPress: () => navigation.navigate('DoctorConsultation') },
@@ -45,13 +47,14 @@ export default function Home() {
             {/* background watermark */}
             <Image source={BG_WATERMARK} style={styles.watermark} resizeMode="contain" />
 
-            {/* Fixed AI Assistant Button */}
-            <Pressable style={styles.fixedAssistant} onPress={() => navigation.navigate('Assistant')}>
-                <Text style={styles.assistantEmoji}>🤖</Text>
-            </Pressable>
-
             <ScrollView
-                contentContainerStyle={styles.scroll}
+                contentContainerStyle={[
+                    styles.scroll,
+                    {
+                        // Add bottom padding to account for tab bar
+                        paddingBottom: spacing.component.tabBarHeight + Math.max(insets.bottom, 8) + spacing.xl
+                    }
+                ]}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
@@ -166,9 +169,6 @@ export default function Home() {
                         </View>
                     ))}
                 </View>
-
-                {/* Bottom spacing for scroll */}
-                <View style={{ height: spacing['3xl'] }} />
             </ScrollView>
         </SafeAreaView>
     );
@@ -186,34 +186,11 @@ const styles = StyleSheet.create({
         opacity: 0.05,
     },
 
-    // Fixed AI Assistant Button
-    fixedAssistant: {
-        position: 'absolute',
-        right: spacing.lg,
-        bottom: spacing['3xl'],
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: colors.primary,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
-        shadowRadius: 16,
-        elevation: 8,
-        zIndex: 1000,
-    },
-    assistantEmoji: {
-        fontSize: 24,
-        color: '#ffffff'
-    },
-
     scroll: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
         paddingTop: spacing.lg,
-        paddingBottom: spacing['4xl'], // Extra space for fixed button
+        // paddingBottom will be set dynamically in the component
     },
 
     /* header */

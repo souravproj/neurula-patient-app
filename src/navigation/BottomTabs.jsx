@@ -4,32 +4,54 @@ import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, typography } from '../theme';
-import { Icon } from '../components';
 
-// Import your actual screens
+// Screens (swap placeholders with real ones)
 import Home from '../screens/Home';
-// Placeholder components for other screens - replace with your actual screens
 const Booking = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
 const Inbox = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
 const Profile = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
 const QuickAction = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
+
+// ---- Tab icons (using text icons as fallback) ----
+const TAB_ICONS = {
+    Home: {
+        active: '🏠',
+        inactive: '🏠',
+        label: 'Home',
+    },
+    Booking: {
+        active: '📅',
+        inactive: '📅',
+        label: 'Booking',
+    },
+    Inbox: {
+        active: '💬',
+        inactive: '💬',
+        label: 'Inbox',
+    },
+    Profile: {
+        active: '👤',
+        inactive: '👤',
+        label: 'Profile',
+    },
+};
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
     return (
         <Tab.Navigator
-            screenOptions={{ headerShown: false }}
-            tabBar={(props) => <CurvedTabBar {...props} />}
             initialRouteName="Home"
+            screenOptions={{
+                headerShown: false,
+                tabBarHideOnKeyboard: true,
+            }}
+            tabBar={(props) => <CurvedTabBar {...props} />}
         >
             <Tab.Screen name="Home" component={Home} />
             <Tab.Screen name="Booking" component={Booking} />
-            <Tab.Screen
-                name="QuickAction"
-                component={QuickAction}
-                options={{ tabBarButton: () => null }} // Hide from normal tab flow
-            />
+            {/* Hidden route for the center FAB */}
+            <Tab.Screen name="QuickAction" component={QuickAction} options={{ tabBarButton: () => null }} />
             <Tab.Screen name="Inbox" component={Inbox} />
             <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
@@ -38,155 +60,182 @@ export default function BottomTabs() {
 
 function CurvedTabBar({ state, descriptors, navigation }) {
     const insets = useSafeAreaInsets();
-    const barHeight = spacing.component.tabBarHeight; // ≈ 80
+    const TAB_BAR_HEIGHT = 65;
 
-    // Filter out QuickAction from normal tabs
-    const visibleRoutes = state.routes.filter(route => route.name !== 'QuickAction');
+    // visible tabs (exclude hidden center one)
+    const visibleRoutes = state.routes.filter((r) => r.name !== 'QuickAction');
 
-    const handleCenterPress = () => {
-        navigation.navigate('QuickAction');
-    };
-
-    const getIconName = (routeName) => {
-        switch (routeName) {
-            case 'Home': return 'home';
-            case 'Booking': return 'calendar';
-            case 'Inbox': return 'message-square';
-            case 'Profile': return 'user';
-            default: return 'home';
-        }
-    };
+    const handleCenterPress = () => navigation.navigate('QuickAction');
 
     return (
-        <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
-            {/* Main tab bar background */}
-            <View style={[styles.tabBar, { height: barHeight - 12 }]}>
-                {visibleRoutes.map((route, index) => {
-                    const routeIndex = state.routes.findIndex(r => r.key === route.key);
-                    const isFocused = state.index === routeIndex;
+        <View style={styles.container}>
+            {/* White background that extends to bottom of screen */}
+            <View style={[styles.bottomFill, { height: Math.max(insets.bottom, 20) }]} />
 
-                    const onPress = () => {
-                        const event = navigation.emit({
-                            type: 'tabPress',
-                            target: route.key,
-                            canPreventDefault: true,
-                        });
+            {/* Main tab bar with curved design */}
+            <View style={[styles.tabBar, { height: TAB_BAR_HEIGHT }]}>
+                {/* Left side of tabs (Home, Booking) */}
+                <View style={styles.leftTabs}>
+                    {visibleRoutes.slice(0, 2).map((route) => renderTabItem(route, state, navigation, descriptors))}
+                </View>
 
-                        if (!isFocused && !event.defaultPrevented) {
-                            navigation.navigate(route.name);
-                        }
-                    };
+                {/* Center space for the notch */}
+                <View style={styles.centerSpace} />
 
-                    const onLongPress = () => {
-                        navigation.emit({
-                            type: 'tabLongPress',
-                            target: route.key,
-                        });
-                    };
+                {/* Right side of tabs (Inbox, Profile) */}
+                <View style={styles.rightTabs}>
+                    {visibleRoutes.slice(2).map((route) => renderTabItem(route, state, navigation, descriptors))}
+                </View>
 
-                    const iconName = getIconName(route.name);
-                    const iconColor = isFocused ? colors.primary : styles.inactiveColor;
-                    const labelColor = isFocused ? colors.primary : styles.inactiveColor;
-
-                    return (
-                        <Pressable
-                            key={route.key}
-                            accessibilityRole="button"
-                            accessibilityState={isFocused ? { selected: true } : {}}
-                            accessibilityLabel={descriptors[route.key].options.tabBarAccessibilityLabel}
-                            testID={descriptors[route.key].options.tabBarTestID}
-                            onPress={onPress}
-                            onLongPress={onLongPress}
-                            style={styles.tabItem}
-                            android_ripple={{
-                                color: colors.primary + '20',
-                                radius: 32,
-                                borderless: true
-                            }}
-                        >
-                            <View style={styles.tabContent}>
-                                <Icon
-                                    name={iconName}
-                                    size="medium"
-                                    color={iconColor}
-                                />
-                                <Text style={[styles.tabLabel, { color: labelColor }]}>
-                                    {route.name}
-                                </Text>
-                            </View>
-                        </Pressable>
-                    );
-                })}
+                {/* Curved notch background */}
+                {/* <View style={styles.notchBackground} /> */}
             </View>
 
-            {/* Floating center action button */}
+            {/* Center floating action button */}
             <Pressable
                 onPress={handleCenterPress}
                 accessibilityRole="button"
                 accessibilityLabel="Quick Action"
                 style={styles.centerButtonContainer}
-                android_ripple={{
-                    color: 'rgba(255, 255, 255, 0.3)',
-                    radius: 36,
-                    borderless: true
-                }}
+                android_ripple={{ color: 'rgba(255,255,255,0.3)', radius: 30, borderless: true }}
             >
-                <View style={styles.centerButtonRing}>
-                    <View style={styles.centerButton}>
-                        <Icon name="sparkles" size="medium" color="#FFFFFF" />
-                    </View>
+                <View style={styles.centerButton}>
+                    <Text style={styles.sparkle}>✨</Text>
                 </View>
             </Pressable>
         </View>
     );
 }
 
-const CENTER_BUTTON_SIZE = 64;
-const CENTER_RING_SIZE = CENTER_BUTTON_SIZE + 12; // 6px ring on each side
+function renderTabItem(route, state, navigation, descriptors) {
+    const indexInState = state.routes.findIndex((r) => r.key === route.key);
+    const isFocused = state.index === indexInState;
 
+    const onPress = () => {
+        const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+        if (!isFocused && !event.defaultPrevented) navigation.navigate(route.name);
+    };
+    const onLongPress = () => navigation.emit({ type: 'tabLongPress', target: route.key });
+
+    const iconSet = TAB_ICONS[route.name];
+
+    return (
+        <Pressable
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityState={isFocused ? { selected: true } : {}}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={styles.tabItem}
+            android_ripple={{ color: colors.primary + '15', radius: 25, borderless: true }}
+        >
+            <View style={styles.tabContent}>
+                <Text style={[styles.iconText, { opacity: isFocused ? 1 : 0.5 }]}>
+                    {isFocused ? iconSet.active : iconSet.inactive}
+                </Text>
+                <Text
+                    style={[
+                        styles.tabLabel,
+                        { color: isFocused ? colors.primary : stylesVars.inactiveColor },
+                    ]}
+                >
+                    {iconSet.label}
+                </Text>
+            </View>
+        </Pressable>
+    );
+}
+
+/* ---------- Constants ---------- */
+const BUTTON_SIZE = 50;
+const NOTCH_WIDTH = 80;
+const NOTCH_HEIGHT = 30;
+
+const stylesVars = {
+    inactiveColor: '#A1A1AA', // Zinc-400 for inactive text
+};
+
+/* ---------- Styles ---------- */
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
         left: 0,
         right: 0,
         bottom: 0,
-        alignItems: 'center',
-        pointerEvents: 'box-none', // Allow touches to pass through transparent areas
+        backgroundColor: 'transparent',
+    },
+
+    // White background that fills bottom safe area completely
+    bottomFill: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: '#FFFFFF',
     },
 
     tabBar: {
-        width: '92%',
-        backgroundColor: '#FFFFFF', // Pure white background
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
+        backgroundColor: '#FFFFFF',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingBottom: 8,
+        paddingTop: 12,
+
+        // Subtle shadow
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: -1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 6,
+        elevation: 5,
+
+        position: 'relative',
+        overflow: 'visible',
+    },
+
+    leftTabs: {
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
+    },
+
+    centerSpace: {
+        width: NOTCH_WIDTH,
+        height: '100%',
         alignItems: 'center',
-        paddingHorizontal: spacing.md,
-        paddingTop: spacing.md,
-        paddingBottom: spacing.lg,
+        justifyContent: 'center',
+    },
 
-        // Soft shadow matching iOS design
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 16,
-        elevation: 16,
+    rightTabs: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+    },
 
-        // Ensure proper border rendering
+    // Curved notch that creates the cutout effect
+    notchBackground: {
+        position: 'absolute',
+        top: -NOTCH_HEIGHT + 5,
+        left: '50%',
+        marginLeft: -NOTCH_WIDTH / 2,
+        width: NOTCH_WIDTH,
+        height: NOTCH_HEIGHT,
+        backgroundColor: 'transparent',
+        borderBottomLeftRadius: NOTCH_WIDTH / 2,
+        borderBottomRightRadius: NOTCH_WIDTH / 2,
         borderWidth: 0,
+        borderTopWidth: NOTCH_HEIGHT,
+        borderTopColor: '#FFFFFF',
     },
 
     tabItem: {
         flex: 1,
+        minHeight: 45,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: spacing.sm,
-        paddingHorizontal: spacing.xs,
-        minHeight: 44, // Minimum touch target
-        minWidth: 44,
+        paddingHorizontal: 8,
     },
 
     tabContent: {
@@ -194,56 +243,55 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 
-    tabLabel: {
-        ...typography.styles.caption,
-        fontSize: 12,
-        fontWeight: '500',
-        marginTop: 4,
+    iconText: {
+        fontSize: 18,
         textAlign: 'center',
-        lineHeight: 14,
+        marginBottom: 2,
     },
 
+    tabLabel: {
+        fontSize: 10,
+        fontWeight: '500',
+        textAlign: 'center',
+        lineHeight: 12,
+    },
+
+    // Center floating action button
     centerButtonContainer: {
         position: 'absolute',
-        top: -(CENTER_RING_SIZE / 2), // Overlap the bar by ~50%
+        top: -BUTTON_SIZE / 2 + 5,
+        left: '50%',
+        marginLeft: -(BUTTON_SIZE + 12) / 2, // Account for larger touch area
         alignItems: 'center',
         justifyContent: 'center',
-        width: CENTER_RING_SIZE + 16, // Extra touch area
-        height: CENTER_RING_SIZE + 16,
+        width: BUTTON_SIZE + 12,
+        height: BUTTON_SIZE + 12,
+        zIndex: 10,
     },
 
-    centerButtonRing: {
-        width: CENTER_RING_SIZE,
-        height: CENTER_RING_SIZE,
-        borderRadius: CENTER_RING_SIZE / 2,
-        backgroundColor: '#2A1F3D', // Dark purple ring
+    centerButton: {
+        width: BUTTON_SIZE,
+        height: BUTTON_SIZE,
+        borderRadius: BUTTON_SIZE / 2,
+        backgroundColor: colors.primary || '#8B5CF6',
         alignItems: 'center',
         justifyContent: 'center',
 
         // Enhanced shadow for floating effect
         shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: Platform.select({ ios: 0.3, android: 0.4 }),
-        shadowRadius: 16,
-        elevation: 20,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        elevation: 8,
+
+        // White border to separate from background
+        borderWidth: 3,
+        borderColor: '#FFFFFF',
     },
 
-    centerButton: {
-        width: CENTER_BUTTON_SIZE,
-        height: CENTER_BUTTON_SIZE,
-        borderRadius: CENTER_BUTTON_SIZE / 2,
-        backgroundColor: colors.primary, // Brand purple
-        alignItems: 'center',
-        justifyContent: 'center',
-
-        // Inner shadow for depth
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 4,
+    sparkle: {
+        fontSize: 16,
+        color: '#FFFFFF',
+        textAlign: 'center',
     },
-
-    // Define inactive color as a constant
-    inactiveColor: '#8593A0', // Muted gray for inactive states
 });
