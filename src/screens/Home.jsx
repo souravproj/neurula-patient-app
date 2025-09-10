@@ -39,8 +39,25 @@ export default function Home() {
 
     const deliveries = [
         { id: 'ORD-2024-001', eta: 'Arriving today, 2:00 PM', status: 'In Transit', progress: 0.65 },
-        { id: 'ORD-2024-001', eta: 'Arriving today, 2:00 PM', status: 'In Transit', progress: 0.35 },
+        { id: 'ORD-2024-002', eta: 'Arriving today, 4:00 PM', status: 'In Transit', progress: 0.35 },
     ];
+
+    // Handler functions for "View All" buttons
+    const handleViewAllServices = () => {
+        navigation.navigate('Services');
+    };
+
+    const handleViewAllAppointments = () => {
+        navigation.navigate('Appointments');
+    };
+
+    const handleViewAllDeliveries = () => {
+        navigation.navigate('Deliveries');
+    };
+
+    const handleAIAgents = () => {
+        navigation.navigate('AIAgents');
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -82,7 +99,9 @@ export default function Home() {
                         placeholderTextColor={colors.textLight}
                         style={styles.searchInput}
                     />
-                    <Text style={styles.searchIcon}>🔍</Text>
+                    <View style={styles.searchIconContainer}>
+                        <Text style={styles.searchIcon}>🔍</Text>
+                    </View>
                 </View>
 
                 {/* Complete Profile */}
@@ -102,7 +121,7 @@ export default function Home() {
                 {/* Book a Service */}
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Book a Service</Text>
-                    <Pressable hitSlop={8} onPress={() => navigation.navigate('Services')}>
+                    <Pressable hitSlop={8} onPress={handleViewAllServices}>
                         <Text style={styles.link}>View All</Text>
                     </Pressable>
                 </View>
@@ -121,41 +140,49 @@ export default function Home() {
                 {/* Upcoming Appointments */}
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Upcoming Appointments</Text>
-                    <Pressable hitSlop={8} onPress={() => navigation.navigate('Appointments')}>
+                    <Pressable hitSlop={8} onPress={handleViewAllAppointments}>
                         <Text style={styles.link}>View All</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.appointmentsList}>
                     {appointments.map((item) => (
-                        <View style={styles.appointmentCard} key={item.id}>
+                        <Pressable
+                            key={item.id}
+                            style={styles.appointmentCard}
+                            onPress={() => navigation.navigate('AppointmentDetails', { appointmentId: item.id })}
+                        >
                             <Image source={item.avatar} style={styles.doctorAvatar} />
                             <View style={styles.appointmentInfo}>
                                 <Text style={styles.doctorName}>{item.name}</Text>
                                 <Text style={styles.doctorRole}>{item.role}</Text>
+                                <Text style={styles.appointmentTime}>{item.time}</Text>
                             </View>
 
                             <View style={styles.appointmentMeta}>
-                                <Text style={styles.appointmentTime}>{item.time}</Text>
                                 <View style={styles.statusBadge}>
                                     <Text style={styles.statusText}>{item.status}</Text>
                                 </View>
                             </View>
-                        </View>
+                        </Pressable>
                     ))}
                 </View>
 
                 {/* Track My Deliveries */}
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Track My Deliveries</Text>
-                    <Pressable hitSlop={8} onPress={() => navigation.navigate('Deliveries')}>
+                    <Pressable hitSlop={8} onPress={handleViewAllDeliveries}>
                         <Text style={styles.link}>View All</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.deliveriesList}>
                     {deliveries.map((d, idx) => (
-                        <View style={styles.deliveryCard} key={`${d.id}-${idx}`}>
+                        <Pressable
+                            key={`${d.id}-${idx}`}
+                            style={styles.deliveryCard}
+                            onPress={() => navigation.navigate('DeliveryTracking', { orderId: d.id })}
+                        >
                             <View style={styles.deliveryHeader}>
                                 <Text style={styles.orderId}>{d.id}</Text>
                                 <View style={styles.deliveryStatusBadge}>
@@ -166,10 +193,29 @@ export default function Home() {
                             <View style={styles.deliveryProgressBar}>
                                 <View style={[styles.deliveryProgressFill, { width: `${Math.round(d.progress * 100)}%` }]} />
                             </View>
-                        </View>
+                        </Pressable>
                     ))}
                 </View>
             </ScrollView>
+
+            {/* Floating AI Agent bubble */}
+            <Pressable
+                onPress={handleAIAgents}
+                accessibilityRole="button"
+                accessibilityLabel="Open AI Assistant"
+                android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: true }}
+                style={[
+                    styles.floatingAIButton,
+                    {
+                        bottom: spacing.component.tabBarHeight + Math.max(insets.bottom, 8) + spacing.lg,
+                        right: spacing.lg
+                    }
+                ]}
+            >
+                <View style={styles.aiButtonInner}>
+                    <Text style={styles.aiButtonIcon}>😊</Text>
+                </View>
+            </Pressable>
         </SafeAreaView>
     );
 }
@@ -178,12 +224,17 @@ export default function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa'
+        // backgroundColor: '#f8f9fa'
     },
     watermark: {
         position: 'absolute',
+        top: '20%',
+        left: '50%',
+        transform: [{ translateX: -100 }, { translateY: -100 }],
         pointerEvents: 'none',
-        opacity: 0.05,
+        opacity: 0.03,
+        width: 200,
+        height: 200,
     },
 
     scroll: {
@@ -205,26 +256,29 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     hello: {
-        ...typography.styles.body,
+        fontFamily: 'Poppins-Regular',
         color: colors.textLight,
         marginBottom: 4,
         fontSize: 16,
+        lineHeight: 24,
     },
     userName: {
-        ...typography.styles.h1,
+        fontFamily: 'Poppins-Bold',
         color: colors.text,
         fontSize: 24,
+        lineHeight: 32,
         fontWeight: '700',
     },
     headerActions: {
         flexDirection: 'row',
         gap: spacing.sm,
         marginTop: 4,
+        alignItems: 'center',
     },
     iconCircle: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
@@ -236,7 +290,14 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
     },
-    iconTxt: { fontSize: 18 },
+    aiAgentsButton: {
+        backgroundColor: 'rgba(143, 0, 255, 0.1)',
+        borderColor: colors.primary,
+    },
+    iconTxt: {
+        fontSize: 20,
+        lineHeight: 20,
+    },
 
     /* search */
     searchWrap: {
@@ -244,25 +305,30 @@ const styles = StyleSheet.create({
         marginBottom: spacing.xl,
     },
     searchInput: {
-        height: 52,
+        height: 56,
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
-        borderRadius: 26,
+        borderRadius: 28,
         paddingLeft: spacing.xl,
         paddingRight: spacing.xl * 2.5,
         color: colors.text,
-        ...typography.styles.body,
+        fontFamily: 'Poppins-Regular',
         fontSize: 16,
+        lineHeight: 24,
     },
-    searchIcon: {
+    searchIconContainer: {
         position: 'absolute',
         right: spacing.lg,
         top: 0,
         bottom: 0,
-        textAlignVertical: 'center',
-        lineHeight: 52,
-        fontSize: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 40,
+        height: 56,
+    },
+    searchIcon: {
+        fontSize: 20,
         opacity: 0.6,
     },
 
@@ -287,15 +353,17 @@ const styles = StyleSheet.create({
         marginBottom: spacing.md,
     },
     cardTitle: {
-        ...typography.styles.bodyStrong,
+        fontFamily: 'Poppins-SemiBold',
         color: colors.text,
-        fontSize: 16,
+        fontSize: 18,
+        lineHeight: 24,
         fontWeight: '600',
     },
     cardArrow: {
-        fontSize: 24,
+        fontSize: 28,
         color: colors.textLight,
         fontWeight: '300',
+        lineHeight: 28,
     },
 
     progressBar: {
@@ -311,9 +379,10 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     progressNote: {
-        ...typography.styles.caption,
+        fontFamily: 'Poppins-Regular',
         color: colors.textLight,
         fontSize: 14,
+        lineHeight: 20,
     },
 
     /* section header */
@@ -322,17 +391,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: spacing.lg,
+        paddingHorizontal: 2,
     },
     sectionTitle: {
-        ...typography.styles.h2,
+        fontFamily: 'Poppins-Bold',
         color: colors.text,
         fontSize: 20,
+        lineHeight: 28,
         fontWeight: '700',
     },
     link: {
-        ...typography.styles.body,
+        fontFamily: 'Poppins-Medium',
         color: colors.primary,
         fontSize: 14,
+        lineHeight: 20,
         fontWeight: '500',
     },
 
@@ -346,7 +418,7 @@ const styles = StyleSheet.create({
     },
     serviceTile: {
         width: '47%',
-        height: 120,
+        height: 130,
         borderRadius: spacing.borderRadius.xl,
         backgroundColor: colors.background,
         borderWidth: 1,
@@ -361,23 +433,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     serviceIconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
         backgroundColor: 'rgba(143, 0, 255, 0.1)',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: spacing.sm,
     },
     serviceEmoji: {
-        fontSize: 24,
-        lineHeight: 24
+        fontSize: 26,
+        lineHeight: 26
     },
     serviceLabel: {
-        ...typography.styles.body,
+        fontFamily: 'Poppins-Medium',
         color: colors.text,
         textAlign: 'center',
         fontSize: 14,
+        lineHeight: 20,
         fontWeight: '500',
     },
 
@@ -401,46 +474,52 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     doctorAvatar: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
         marginRight: spacing.md
     },
     appointmentInfo: {
         flex: 1
     },
     doctorName: {
-        ...typography.styles.bodyStrong,
+        fontFamily: 'Poppins-SemiBold',
         color: colors.text,
         fontSize: 16,
+        lineHeight: 22,
         fontWeight: '600',
         marginBottom: 2,
     },
     doctorRole: {
-        ...typography.styles.caption,
+        fontFamily: 'Poppins-Regular',
         color: colors.textLight,
         fontSize: 14,
+        lineHeight: 20,
+        marginBottom: 4,
     },
     appointmentMeta: {
         alignItems: 'flex-end',
-        gap: spacing.sm
+        justifyContent: 'center',
     },
     appointmentTime: {
-        ...typography.styles.caption,
+        fontFamily: 'Poppins-Regular',
         color: colors.textLight,
         fontSize: 12,
+        lineHeight: 16,
+        marginBottom: spacing.xs,
     },
 
     statusBadge: {
         paddingHorizontal: spacing.sm,
-        paddingVertical: 4,
+        paddingVertical: 6,
         borderRadius: 12,
         backgroundColor: 'rgba(46, 204, 113, 0.15)',
     },
     statusText: {
-        ...typography.styles.caption,
+        fontFamily: 'Poppins-Medium',
         color: '#2ecc71',
         fontSize: 12,
+        lineHeight: 16,
         fontWeight: '500',
     },
 
@@ -468,26 +547,30 @@ const styles = StyleSheet.create({
         marginBottom: spacing.sm,
     },
     orderId: {
-        ...typography.styles.bodyStrong,
+        fontFamily: 'Poppins-SemiBold',
         color: colors.text,
         fontSize: 16,
+        lineHeight: 22,
         fontWeight: '600',
     },
     deliveryStatusBadge: {
         paddingHorizontal: spacing.sm,
-        paddingVertical: 4,
+        paddingVertical: 6,
         borderRadius: 12,
         backgroundColor: 'rgba(155, 89, 182, 0.15)',
     },
     deliveryStatusText: {
+        fontFamily: 'Poppins-Medium',
         color: '#9b59b6',
         fontSize: 12,
+        lineHeight: 16,
         fontWeight: '500',
     },
     etaText: {
-        ...typography.styles.caption,
+        fontFamily: 'Poppins-Regular',
         color: colors.textLight,
         fontSize: 14,
+        lineHeight: 20,
         marginBottom: spacing.md,
     },
 
@@ -501,5 +584,37 @@ const styles = StyleSheet.create({
         height: '100%',
         backgroundColor: colors.primary,
         borderRadius: 6,
+    },
+
+    /* Floating AI Agents Button */
+    floatingAIButton: {
+        position: 'absolute',
+        bottom: 80, // Position above tab bar but lower
+        right: 16,
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#8B5CF6',
+        shadowColor: '#8B5CF6',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+        elevation: 10,
+        zIndex: 1000,
+    },
+    aiButtonInner: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 28,
+        backgroundColor: '#A855F7',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 3,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+    },
+    aiButtonIcon: {
+        fontSize: 20,
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
