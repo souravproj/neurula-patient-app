@@ -45,6 +45,11 @@ export default function Home() {
             {/* background watermark */}
             <Image source={BG_WATERMARK} style={styles.watermark} resizeMode="contain" />
 
+            {/* Fixed AI Assistant Button */}
+            <Pressable style={styles.fixedAssistant} onPress={() => navigation.navigate('Assistant')}>
+                <Text style={styles.assistantEmoji}>🤖</Text>
+            </Pressable>
+
             <ScrollView
                 contentContainerStyle={styles.scroll}
                 keyboardShouldPersistTaps="handled"
@@ -52,7 +57,7 @@ export default function Home() {
             >
                 {/* Header */}
                 <View style={styles.headerRow}>
-                    <View>
+                    <View style={styles.headerLeft}>
                         <Text style={styles.hello}>Good Morning,</Text>
                         <Text style={styles.userName}>Ahmed Al-Rashid</Text>
                     </View>
@@ -78,10 +83,12 @@ export default function Home() {
                 </View>
 
                 {/* Complete Profile */}
-                <View style={styles.card}>
+                <View style={styles.profileCard}>
                     <View style={styles.cardRowBetween}>
                         <Text style={styles.cardTitle}>Complete Your Profile</Text>
-                        <Pressable hitSlop={8}><Text style={styles.cardKebab}>⋯</Text></Pressable>
+                        <Pressable hitSlop={8}>
+                            <Text style={styles.cardArrow}>›</Text>
+                        </Pressable>
                     </View>
                     <View style={styles.progressBar}>
                         <View style={[styles.progressFill, { width: '65%' }]} />
@@ -97,19 +104,16 @@ export default function Home() {
                     </Pressable>
                 </View>
 
-                <View style={styles.grid}>
+                <View style={styles.servicesGrid}>
                     {services.map((s) => (
                         <Pressable key={s.key} style={styles.serviceTile} onPress={s.onPress}>
-                            <View style={styles.serviceIcon}><Text style={styles.serviceEmoji}>{s.icon}</Text></View>
-                            <Text style={styles.serviceText}>{s.label}</Text>
+                            <View style={styles.serviceIconContainer}>
+                                <Text style={styles.serviceEmoji}>{s.icon}</Text>
+                            </View>
+                            <Text style={styles.serviceLabel}>{s.label}</Text>
                         </Pressable>
                     ))}
                 </View>
-
-                {/* Floating smile button (assistant/help) */}
-                <Pressable style={styles.fab} onPress={() => navigation.navigate('Assistant')}>
-                    <Text style={styles.fabSmile}>😊</Text>
-                </Pressable>
 
                 {/* Upcoming Appointments */}
                 <View style={styles.sectionHead}>
@@ -119,19 +123,19 @@ export default function Home() {
                     </Pressable>
                 </View>
 
-                <View style={{ gap: spacing.sm }}>
+                <View style={styles.appointmentsList}>
                     {appointments.map((item) => (
-                        <View style={styles.listCard} key={item.id}>
-                            <Image source={item.avatar} style={styles.avatar} />
-                            <View style={{ flex: 1 }}>
-                                <Text style={styles.listTitle}>{item.name}</Text>
-                                <Text style={styles.listSub}>{item.role}</Text>
+                        <View style={styles.appointmentCard} key={item.id}>
+                            <Image source={item.avatar} style={styles.doctorAvatar} />
+                            <View style={styles.appointmentInfo}>
+                                <Text style={styles.doctorName}>{item.name}</Text>
+                                <Text style={styles.doctorRole}>{item.role}</Text>
                             </View>
 
-                            <View style={styles.rightMeta}>
-                                <Text style={styles.timeTxt}>{item.time}</Text>
-                                <View style={styles.badge}>
-                                    <Text style={styles.badgeTxt}>{item.status}</Text>
+                            <View style={styles.appointmentMeta}>
+                                <Text style={styles.appointmentTime}>{item.time}</Text>
+                                <View style={styles.statusBadge}>
+                                    <Text style={styles.statusText}>{item.status}</Text>
                                 </View>
                             </View>
                         </View>
@@ -146,56 +150,104 @@ export default function Home() {
                     </Pressable>
                 </View>
 
-                <View style={{ gap: spacing.sm, marginBottom: spacing['3xl'] }}>
+                <View style={styles.deliveriesList}>
                     {deliveries.map((d, idx) => (
-                        <View style={styles.orderCard} key={`${d.id}-${idx}`}>
-                            <Text style={styles.orderId}>{d.id}</Text>
-                            <View style={styles.orderMetaRow}>
-                                <Text style={styles.etaTxt}>{d.eta}</Text>
-                                <View style={[styles.badge, styles.badgeTransit]}>
-                                    <Text style={[styles.badgeTxt, styles.badgeTransitTxt]}>{d.status}</Text>
+                        <View style={styles.deliveryCard} key={`${d.id}-${idx}`}>
+                            <View style={styles.deliveryHeader}>
+                                <Text style={styles.orderId}>{d.id}</Text>
+                                <View style={styles.deliveryStatusBadge}>
+                                    <Text style={styles.deliveryStatusText}>{d.status}</Text>
                                 </View>
                             </View>
-                            <View style={styles.progressBarThin}>
-                                <View style={[styles.progressFillThin, { width: `${Math.round(d.progress * 100)}%` }]} />
+                            <Text style={styles.etaText}>{d.eta}</Text>
+                            <View style={styles.deliveryProgressBar}>
+                                <View style={[styles.deliveryProgressFill, { width: `${Math.round(d.progress * 100)}%` }]} />
                             </View>
                         </View>
                     ))}
                 </View>
+
+                {/* Bottom spacing for scroll */}
+                <View style={{ height: spacing['3xl'] }} />
             </ScrollView>
         </SafeAreaView>
     );
 }
 
 /* ---------------- styles ---------------- */
-const TILE_SIZE = '48%';
-
 const styles = StyleSheet.create({
-    container: { flex: 1 },
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa'
+    },
     watermark: {
         position: 'absolute',
         pointerEvents: 'none',
+        opacity: 0.05,
     },
+
+    // Fixed AI Assistant Button
+    fixedAssistant: {
+        position: 'absolute',
+        right: spacing.lg,
+        bottom: spacing['3xl'],
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: colors.shadow,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 16,
+        elevation: 8,
+        zIndex: 1000,
+    },
+    assistantEmoji: {
+        fontSize: 24,
+        color: '#ffffff'
+    },
+
     scroll: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
         paddingTop: spacing.lg,
-        paddingBottom: spacing['2xl'],
+        paddingBottom: spacing['4xl'], // Extra space for fixed button
     },
 
     /* header */
     headerRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: spacing.lg,
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        marginBottom: spacing.xl,
+        paddingTop: spacing.sm,
     },
-    hello: { ...typography.styles.caption, color: colors.textLight, marginBottom: 2 },
-    userName: { ...typography.styles.h1, color: colors.text },
-    headerActions: { marginLeft: 'auto', flexDirection: 'row', gap: spacing.sm },
+    headerLeft: {
+        flex: 1,
+    },
+    hello: {
+        ...typography.styles.body,
+        color: colors.textLight,
+        marginBottom: 4,
+        fontSize: 16,
+    },
+    userName: {
+        ...typography.styles.h1,
+        color: colors.text,
+        fontSize: 24,
+        fontWeight: '700',
+    },
+    headerActions: {
+        flexDirection: 'row',
+        gap: spacing.sm,
+        marginTop: 4,
+    },
     iconCircle: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
@@ -203,72 +255,88 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         shadowColor: colors.shadowGlass,
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.12,
-        shadowRadius: 6,
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
         elevation: 2,
     },
-    iconTxt: { fontSize: 16 },
+    iconTxt: { fontSize: 18 },
 
     /* search */
     searchWrap: {
         position: 'relative',
-        marginBottom: spacing.lg,
+        marginBottom: spacing.xl,
     },
     searchInput: {
-        height: spacing.component.inputHeight,
+        height: 52,
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
-        borderRadius: spacing.borderRadius['3xl'],
+        borderRadius: 26,
         paddingLeft: spacing.xl,
-        paddingRight: spacing.xl * 2,
+        paddingRight: spacing.xl * 2.5,
         color: colors.text,
         ...typography.styles.body,
+        fontSize: 16,
     },
     searchIcon: {
         position: 'absolute',
-        right: spacing.md,
+        right: spacing.lg,
         top: 0,
         bottom: 0,
         textAlignVertical: 'center',
-        lineHeight: spacing.component.inputHeight,
-        opacity: 0.75,
+        lineHeight: 52,
+        fontSize: 18,
+        opacity: 0.6,
     },
 
-    /* cards */
-    card: {
-        backgroundColor: colors.glassMorphism,
+    /* profile completion card */
+    profileCard: {
+        backgroundColor: colors.background,
         borderColor: colors.borderGradient,
         borderWidth: 1,
         borderRadius: spacing.borderRadius['2xl'],
         padding: spacing.lg,
         shadowColor: colors.shadowGlass,
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.12,
-        shadowRadius: 16,
-        elevation: 4,
-        marginBottom: spacing.lg,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 3,
+        marginBottom: spacing.xl,
     },
-    cardRowBetween: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-    cardTitle: { ...typography.styles.bodyStrong, color: colors.text },
-    cardKebab: { fontSize: 18, color: colors.textLight },
+    cardRowBetween: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: spacing.md,
+    },
+    cardTitle: {
+        ...typography.styles.bodyStrong,
+        color: colors.text,
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    cardArrow: {
+        fontSize: 24,
+        color: colors.textLight,
+        fontWeight: '300',
+    },
 
     progressBar: {
-        height: 10,
-        backgroundColor: 'rgba(143, 0, 255, 0.08)',
-        borderRadius: 10,
+        height: 8,
+        backgroundColor: 'rgba(143, 0, 255, 0.1)',
+        borderRadius: 8,
         overflow: 'hidden',
-        marginTop: spacing.md,
+        marginBottom: spacing.sm,
     },
     progressFill: {
         height: '100%',
         backgroundColor: colors.primary,
-        borderRadius: 10,
+        borderRadius: 8,
     },
     progressNote: {
         ...typography.styles.caption,
         color: colors.textLight,
-        marginTop: spacing.xs,
+        fontSize: 14,
     },
 
     /* section header */
@@ -276,119 +344,185 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: spacing.lg,
-        marginBottom: spacing.md,
+        marginBottom: spacing.lg,
     },
-    sectionTitle: { ...typography.styles.h2, color: colors.text },
-    link: { ...typography.styles.body, color: colors.link, textDecorationLine: 'underline' },
+    sectionTitle: {
+        ...typography.styles.h2,
+        color: colors.text,
+        fontSize: 20,
+        fontWeight: '700',
+    },
+    link: {
+        ...typography.styles.body,
+        color: colors.primary,
+        fontSize: 14,
+        fontWeight: '500',
+    },
 
     /* services grid */
-    grid: {
+    servicesGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
-        gap: spacing.sm,
-        marginBottom: spacing.lg,
+        gap: spacing.md,
+        marginBottom: spacing.xl,
     },
     serviceTile: {
-        width: TILE_SIZE,
-        height: 100,
+        width: '47%',
+        height: 120,
         borderRadius: spacing.borderRadius.xl,
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
-        padding: spacing.md,
+        padding: spacing.lg,
         shadowColor: colors.shadowGlass,
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
+        shadowOpacity: 0.08,
         shadowRadius: 12,
         elevation: 3,
-        justifyContent: 'space-between',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    serviceIcon: {
-        width: 38, height: 38, borderRadius: 12,
-        backgroundColor: colors.glassMorphism,
-        borderWidth: 1, borderColor: colors.borderGradient,
-        alignItems: 'center', justifyContent: 'center',
+    serviceIconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: 'rgba(143, 0, 255, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: spacing.sm,
     },
-    serviceEmoji: { fontSize: 20, lineHeight: 22 },
-    serviceText: { ...typography.styles.body, color: colors.text },
+    serviceEmoji: {
+        fontSize: 24,
+        lineHeight: 24
+    },
+    serviceLabel: {
+        ...typography.styles.body,
+        color: colors.text,
+        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: '500',
+    },
 
-    /* floating smile button placed after grid */
-    fab: {
-        alignSelf: 'flex-end',
-        width: 44, height: 44, borderRadius: 22,
-        backgroundColor: colors.primary,
-        alignItems: 'center', justifyContent: 'center',
-        shadowColor: colors.shadow, shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.25, shadowRadius: 12, elevation: 5,
-        marginRight: spacing.sm, marginBottom: spacing.md,
+    /* appointments */
+    appointmentsList: {
+        gap: spacing.md,
+        marginBottom: spacing.xl,
     },
-    fabSmile: { fontSize: 18, color: colors.background },
-
-    /* upcoming appointments */
-    listCard: {
+    appointmentCard: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
         borderRadius: spacing.borderRadius.xl,
-        paddingVertical: spacing.md,
-        paddingHorizontal: spacing.md,
+        padding: spacing.lg,
         shadowColor: colors.shadowGlass,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
         elevation: 2,
     },
-    avatar: { width: 44, height: 44, borderRadius: 22, marginRight: spacing.md },
-    listTitle: { ...typography.styles.bodyStrong, color: colors.text },
-    listSub: { ...typography.styles.caption, color: colors.textLight, marginTop: 2 },
-    rightMeta: { alignItems: 'flex-end', gap: 6, marginLeft: spacing.md },
-    timeTxt: { ...typography.styles.caption, color: colors.textLight },
+    doctorAvatar: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        marginRight: spacing.md
+    },
+    appointmentInfo: {
+        flex: 1
+    },
+    doctorName: {
+        ...typography.styles.bodyStrong,
+        color: colors.text,
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 2,
+    },
+    doctorRole: {
+        ...typography.styles.caption,
+        color: colors.textLight,
+        fontSize: 14,
+    },
+    appointmentMeta: {
+        alignItems: 'flex-end',
+        gap: spacing.sm
+    },
+    appointmentTime: {
+        ...typography.styles.caption,
+        color: colors.textLight,
+        fontSize: 12,
+    },
 
-    badge: {
+    statusBadge: {
         paddingHorizontal: spacing.sm,
         paddingVertical: 4,
-        borderRadius: 999,
+        borderRadius: 12,
         backgroundColor: 'rgba(46, 204, 113, 0.15)',
-        borderWidth: 1,
-        borderColor: 'rgba(46, 204, 113, 0.35)',
     },
-    badgeTxt: { ...typography.styles.caption, color: '#2ecc71' },
+    statusText: {
+        ...typography.styles.caption,
+        color: '#2ecc71',
+        fontSize: 12,
+        fontWeight: '500',
+    },
 
     /* deliveries */
-    orderCard: {
+    deliveriesList: {
+        gap: spacing.md,
+        marginBottom: spacing.xl,
+    },
+    deliveryCard: {
         backgroundColor: colors.background,
         borderWidth: 1,
         borderColor: colors.borderGradient,
         borderRadius: spacing.borderRadius.xl,
-        padding: spacing.md,
+        padding: spacing.lg,
         shadowColor: colors.shadowGlass,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
         elevation: 2,
     },
-    orderId: { ...typography.styles.bodyStrong, color: colors.text, marginBottom: spacing.xs },
-    orderMetaRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
-    etaTxt: { ...typography.styles.caption, color: colors.textLight },
-
-    badgeTransit: {
-        backgroundColor: 'rgba(155, 89, 182, 0.12)',
-        borderColor: 'rgba(155, 89, 182, 0.35)',
+    deliveryHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: spacing.sm,
     },
-    badgeTransitTxt: { color: '#9b59b6' },
+    orderId: {
+        ...typography.styles.bodyStrong,
+        color: colors.text,
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    deliveryStatusBadge: {
+        paddingHorizontal: spacing.sm,
+        paddingVertical: 4,
+        borderRadius: 12,
+        backgroundColor: 'rgba(155, 89, 182, 0.15)',
+    },
+    deliveryStatusText: {
+        color: '#9b59b6',
+        fontSize: 12,
+        fontWeight: '500',
+    },
+    etaText: {
+        ...typography.styles.caption,
+        color: colors.textLight,
+        fontSize: 14,
+        marginBottom: spacing.md,
+    },
 
-    progressBarThin: {
+    deliveryProgressBar: {
         height: 6,
-        backgroundColor: 'rgba(143, 0, 255, 0.08)',
+        backgroundColor: 'rgba(143, 0, 255, 0.1)',
         borderRadius: 6,
         overflow: 'hidden',
     },
-    progressFillThin: {
+    deliveryProgressFill: {
         height: '100%',
         backgroundColor: colors.primary,
+        borderRadius: 6,
     },
 });

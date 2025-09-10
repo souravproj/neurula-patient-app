@@ -8,7 +8,7 @@ import ScanEmiratesID from '../screens/ScanEmiratesID';
 import ManualEntry from '../screens/ManualEntry';
 import OtpVerification from '../screens/OtpVerification';
 import ScanPassport from '../screens/ScanPassport';
-import Home from '../screens/Home';
+import BottomTabs from './BottomTabs';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,7 +27,7 @@ export default function AppNavigator() {
         <Stack.Screen name="ScanPassport" component={ScanPassport} />
         <Stack.Screen name="ManualEntry" component={ManualEntry} />
         <Stack.Screen name="OtpVerification" component={OtpVerification} /> */}
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Home" component={BottomTabs} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
