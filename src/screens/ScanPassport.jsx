@@ -7,6 +7,7 @@ import {
     Alert,
     ActivityIndicator,
     Platform,
+    Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -50,7 +51,7 @@ export default function ScanPassport() {
         try {
             // Phase 1: Capturing
             setCapturing(true);
-            
+
             // Take picture
             const photo = await cameraRef.current.takePictureAsync({
                 quality: 0.8,
@@ -62,10 +63,10 @@ export default function ScanPassport() {
                 // Phase 2: Processing
                 setCapturing(false);
                 setProcessing(true);
-                
+
                 // Simulate OCR processing delay
                 await new Promise(resolve => setTimeout(resolve, 2500));
-                
+
                 // Navigate to OCR Review with the captured passport image
                 navigation.navigate('OCRReview', {
                     source: 'passport',
@@ -122,17 +123,17 @@ export default function ScanPassport() {
                     accessibilityRole="button"
                     accessibilityLabel="Close"
                 >
-                    <Icon name="x" size="medium" color="#FFFFFF" />
+                    <Icon name="x" size="large" color="#FFFFFF" />
                 </Pressable>
 
                 <View style={styles.permissionContainer}>
-                    <Icon name="camera-off" size="large" color="#FFFFFF" />
+                    <Icon name="x" size="large" color="#FFFFFF" />
                     <Text style={styles.permissionTitle}>Camera Access Required</Text>
                     <Text style={styles.permissionText}>
-                        We need access to your camera to scan your passport. 
+                        We need access to your camera to scan your passport.
                         Please grant camera permissions to continue.
                     </Text>
-                    
+
                     <Button
                         title="Grant Permission"
                         onPress={handlePermissionRequest}
@@ -174,7 +175,7 @@ export default function ScanPassport() {
                 accessibilityRole="button"
                 accessibilityLabel="Close"
             >
-                <Icon name="x" size="medium" color="#FFFFFF" />
+                <Icon name="x" size="large" color="#FFFFFF" />
             </Pressable>
 
             {/* Camera view */}
@@ -187,15 +188,13 @@ export default function ScanPassport() {
                 >
                     {/* Camera overlay */}
                     <View style={styles.overlay}>
-                        {/* Top section with instructions */}
-                        <View style={styles.topSection}>
-                            <Text style={styles.title}>Scan Passport</Text>
-                            <Text style={styles.subtitle}>
-                                Position your passport's photo page within the frame
-                            </Text>
-                            <Text style={styles.helperSubtext}>
-                                For Non-Residents
-                            </Text>
+                        {/* Floating Logo */}
+                        <View style={styles.logoSection}>
+                            <Image
+                                source={require('../../assets/white-logo.png')}
+                                style={styles.logo}
+                                resizeMode="contain"
+                            />
                         </View>
 
                         {/* Middle section with frame */}
@@ -206,7 +205,7 @@ export default function ScanPassport() {
                                 <View style={[styles.frameCorner, styles.topRight]} />
                                 <View style={[styles.frameCorner, styles.bottomLeft]} />
                                 <View style={[styles.frameCorner, styles.bottomRight]} />
-                                
+
                                 {/* Passport icon in center */}
                                 <View style={styles.frameCenter}>
                                     <Icon name="passport" size="large" color="rgba(255,255,255,0.5)" />
@@ -221,10 +220,10 @@ export default function ScanPassport() {
                         {/* Bottom section with controls */}
                         <View style={styles.bottomSection}>
                             <Text style={styles.helperText}>
-                                {processing 
-                                    ? "Processing passport data..." 
-                                    : capturing 
-                                        ? "Capturing passport..." 
+                                {processing
+                                    ? "Processing passport data..."
+                                    : capturing
+                                        ? "Capturing passport..."
                                         : "Make sure the passport photo page is clearly visible,\nwell-lit, and flat against a dark surface"
                                 }
                             </Text>
@@ -270,9 +269,16 @@ const styles = StyleSheet.create({
     },
     closeBtn: {
         position: 'absolute',
-        right: spacing.lg,
-        top: spacing.lg,
+        right: spacing.sm,
+        top: spacing.xl,
         zIndex: 20,
+        // backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        borderRadius: spacing.borderRadius.full,
+        padding: spacing.sm,
+        minWidth: 44,
+        minHeight: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     // Permission views
@@ -326,32 +332,22 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.4)',
         justifyContent: 'space-between',
         paddingHorizontal: spacing.lg,
-        paddingTop: spacing['6xl'],
+        // paddingTop: spacing['6xl'],
+        margingTop: '10%',
         paddingBottom: spacing.xl,
     },
 
-    // Top section
-    topSection: {
+    // Logo section
+    logoSection: {
         alignItems: 'center',
         paddingVertical: spacing.lg,
+        paddingHorizontal: spacing.lg,
+        marginTop: '10%'
     },
-    title: {
-        ...typography.styles.h1,
-        color: '#FFFFFF',
-        textAlign: 'center',
-        marginBottom: spacing.xs,
-    },
-    subtitle: {
-        ...typography.styles.body,
-        color: 'rgba(255,255,255,0.9)',
-        textAlign: 'center',
-        marginBottom: spacing.xs,
-    },
-    helperSubtext: {
-        ...typography.styles.caption,
-        color: 'rgba(255,255,255,0.6)',
-        textAlign: 'center',
-        fontStyle: 'italic',
+    logo: {
+        width: 250,
+        height: 100,
+        tintColor: '#FFFFFF',
     },
 
     // Middle section with scan frame - passport optimized
@@ -411,7 +407,7 @@ const styles = StyleSheet.create({
         marginTop: spacing.xs,
         fontWeight: '500',
     },
-    
+
     // Scanning line effect
     scanLine: {
         position: 'absolute',

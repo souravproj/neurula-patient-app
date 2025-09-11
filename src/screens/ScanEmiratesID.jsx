@@ -7,6 +7,7 @@ import {
     Alert,
     ActivityIndicator,
     Platform,
+    Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -50,7 +51,7 @@ export default function ScanEmiratesID() {
         try {
             // Phase 1: Capturing
             setCapturing(true);
-            
+
             // Take picture
             const photo = await cameraRef.current.takePictureAsync({
                 quality: 0.8,
@@ -62,10 +63,10 @@ export default function ScanEmiratesID() {
                 // Phase 2: Processing
                 setCapturing(false);
                 setProcessing(true);
-                
+
                 // Simulate OCR processing delay
                 await new Promise(resolve => setTimeout(resolve, 2500));
-                
+
                 // Navigate to OCR Review with the captured image
                 navigation.navigate('OCRReview', {
                     source: 'emirates-id',
@@ -122,13 +123,13 @@ export default function ScanEmiratesID() {
                 </Pressable>
 
                 <View style={styles.permissionContainer}>
-                    <Icon name="camera-off" size="large" color="#FFFFFF" />
+                    <Icon name="x" size="large" color="#FFFFFF" />
                     <Text style={styles.permissionTitle}>Camera Access Required</Text>
                     <Text style={styles.permissionText}>
-                        We need access to your camera to scan your Emirates ID. 
+                        We need access to your camera to scan your Emirates ID.
                         Please grant camera permissions to continue.
                     </Text>
-                    
+
                     <Button
                         title="Grant Permission"
                         onPress={handlePermissionRequest}
@@ -170,7 +171,7 @@ export default function ScanEmiratesID() {
                 accessibilityRole="button"
                 accessibilityLabel="Close"
             >
-                <Icon name="x" size="medium" color="#FFFFFF" />
+                <Icon name="x" size="large" color="#FFFFFF" />
             </Pressable>
 
             {/* Camera view */}
@@ -183,24 +184,25 @@ export default function ScanEmiratesID() {
                 >
                     {/* Camera overlay */}
                     <View style={styles.overlay}>
-                        {/* Top section with instructions */}
-                        <View style={styles.topSection}>
-                            <Text style={styles.title}>Scan Emirates ID</Text>
-                            <Text style={styles.subtitle}>
-                                Position your Emirates ID within the frame
-                            </Text>
+                        {/* Floating Logo */}
+                        <View style={styles.logoSection}>
+                            <Image
+                                source={require('../../assets/white-logo.png')}
+                                style={styles.logo}
+                                resizeMode="contain"
+                            />
                         </View>
 
                         {/* Middle section with frame */}
                         <View style={styles.middleSection}>
                             <View style={styles.scanFrame}>
-                                <View style={styles.frameCorner} style={[styles.frameCorner, styles.topLeft]} />
-                                <View style={styles.frameCorner} style={[styles.frameCorner, styles.topRight]} />
-                                <View style={styles.frameCorner} style={[styles.frameCorner, styles.bottomLeft]} />
-                                <View style={styles.frameCorner} style={[styles.frameCorner, styles.bottomRight]} />
-                                
+                                <View style={[styles.frameCorner, styles.topLeft]} />
+                                <View style={[styles.frameCorner, styles.topRight]} />
+                                <View style={[styles.frameCorner, styles.bottomLeft]} />
+                                <View style={[styles.frameCorner, styles.bottomRight]} />
+
                                 <View style={styles.frameCenter}>
-                                    <Icon name="credit-card" size="large" color="rgba(255,255,255,0.5)" />
+                                    <Icon name="id-card" size="large" color="rgba(255,255,255,0.5)" />
                                 </View>
                             </View>
                         </View>
@@ -208,10 +210,10 @@ export default function ScanEmiratesID() {
                         {/* Bottom section with controls */}
                         <View style={styles.bottomSection}>
                             <Text style={styles.helperText}>
-                                {processing 
-                                    ? "Processing Emirates ID..." 
-                                    : capturing 
-                                        ? "Capturing Emirates ID..." 
+                                {processing
+                                    ? "Processing Emirates ID..."
+                                    : capturing
+                                        ? "Capturing Emirates ID..."
                                         : "Make sure your Emirates ID is clearly visible and well-lit"
                                 }
                             </Text>
@@ -253,13 +255,20 @@ export default function ScanEmiratesID() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000000',
+        // backgroundColor: '#000000',
     },
     closeBtn: {
         position: 'absolute',
-        right: spacing.lg,
-        top: spacing.lg,
+        right: spacing.sm,
+        top: spacing['3xl'],
         zIndex: 20,
+        // backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        borderRadius: spacing.borderRadius.full,
+        padding: spacing.sm,
+        // minWidth: 60,
+        // minHeight: 60,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     // Permission views
@@ -310,28 +319,24 @@ const styles = StyleSheet.create({
     // Camera overlay
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        // backgroundColor: 'rgba(0,0,0,0.3)',
         justifyContent: 'space-between',
         paddingHorizontal: spacing.lg,
-        paddingTop: spacing['6xl'],
+        // paddingTop: spacing['6xl'],
+        marginTop: '10%',
         paddingBottom: spacing.xl,
     },
 
-    // Top section
-    topSection: {
+    // Logo section
+    logoSection: {
         alignItems: 'center',
         paddingVertical: spacing.lg,
+        paddingHorizontal: spacing.lg,
     },
-    title: {
-        ...typography.styles.h1,
-        color: '#FFFFFF',
-        textAlign: 'center',
-        marginBottom: spacing.xs,
-    },
-    subtitle: {
-        ...typography.styles.body,
-        color: 'rgba(255,255,255,0.8)',
-        textAlign: 'center',
+    logo: {
+        width: 250,
+        height: 100,
+        tintColor: '#FFFFFF',
     },
 
     // Middle section with scan frame
