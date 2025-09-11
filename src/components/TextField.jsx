@@ -61,8 +61,8 @@ export default function TextField({
           autoCorrect={autoCorrect}
           multiline={multiline}
           textAlignVertical={multiline ? 'top' : 'center'}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          // onFocus={() => setFocused(true)}
+          // onBlur={() => setFocused(false)}
           style={[
             styles.input,
             leftIcon && { paddingLeft: 40 },
@@ -107,7 +107,7 @@ export default function TextField({
 }
 
 const styles = StyleSheet.create({
-  wrapper: { 
+  wrapper: {
     gap: 6,
     marginBottom: 16,
   },
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#374151',
   },
-  required: { 
-    color: '#A855F7' 
+  required: {
+    color: '#A855F7'
   },
   fieldContainer: {
     position: 'relative',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
-  fieldError: { 
+  fieldError: {
     borderColor: '#EF4444',
     borderWidth: 2,
   },
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     fontFamily: 'Poppins_400Regular',
     fontSize: 14,
-    lineHeight: 20,
+    // lineHeight: 20,
     paddingVertical: 12,
     paddingHorizontal: 14,
     color: '#111827',
