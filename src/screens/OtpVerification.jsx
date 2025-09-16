@@ -96,7 +96,7 @@ export default function OtpVerification() {
             await new Promise(resolve => setTimeout(resolve, 2000));
 
             // On success:
-            navigation.navigate('Home'); // or 'Home' / 'Dashboard'
+            navigation.navigate('BottomNav');
         } catch (error) {
             // Handle error (you can add error state/alert here if needed)
             console.error('Verification failed:', error);

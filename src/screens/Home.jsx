@@ -32,7 +32,7 @@ export default function Home() {
     ];
 
     const appointments = [
-        { id: 'a1', name: 'Dr Michael Chen', role: 'General Physician', time: 'Today, 7:00 PM', status: 'Confirmed', avatar: AVATAR_1 },
+        { id: 'a1', name: 'Dr John Doe', role: 'General', time: 'Today, 7:00 PM', status: 'Confirmed', avatar: AVATAR_1 },
         { id: 'a2', name: 'Dr John Doe', role: 'Cardiologist', time: 'Today, 10:30 AM', status: 'Confirmed', avatar: AVATAR_2 },
         { id: 'a3', name: 'Dr John Doe', role: 'Cardiologist', time: 'Today, 10:30 AM', status: 'Confirmed', avatar: AVATAR_3 },
     ];
@@ -156,10 +156,10 @@ export default function Home() {
                             <View style={styles.appointmentInfo}>
                                 <Text style={styles.doctorName}>{item.name}</Text>
                                 <Text style={styles.doctorRole}>{item.role}</Text>
-                                <Text style={styles.appointmentTime}>{item.time}</Text>
                             </View>
 
                             <View style={styles.appointmentMeta}>
+                                <Text style={styles.appointmentTime}>{item.time}</Text>
                                 <View style={styles.statusBadge}>
                                     <Text style={styles.statusText}>{item.status}</Text>
                                 </View>
@@ -228,13 +228,15 @@ const styles = StyleSheet.create({
     },
     watermark: {
         position: 'absolute',
-        top: '20%',
-        left: '50%',
+        // top: '20%',
+        // left: '50%',
         transform: [{ translateX: -100 }, { translateY: -100 }],
         pointerEvents: 'none',
         opacity: 0.03,
-        width: 200,
-        height: 200,
+        // width: 200,
+        // height: 200,
+        height: '100vh',
+        width: '100%'
     },
 
     scroll: {
