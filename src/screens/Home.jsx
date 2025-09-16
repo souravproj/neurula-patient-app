@@ -1,5 +1,5 @@
 // File: src/screens/Home.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     StyleSheet,
@@ -8,6 +8,7 @@ import {
     ScrollView,
     TextInput,
     Image,
+    Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -20,39 +21,55 @@ const AVATAR_1 = require('../../assets/logo1.png');
 const AVATAR_2 = require('../../assets/logo2.png');
 const AVATAR_3 = require('../../assets/logo3.png');
 
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
 export default function Home() {
     const navigation = useNavigation();
     const insets = useSafeAreaInsets();
+
+    const [showAllServices, setShowAllServices] = useState(false);
+    const [showAllAppointments, setShowAllAppointments] = useState(false);
+    const [showAllDeliveries, setShowAllDeliveries] = useState(false);
 
     const services = [
         { key: 'consult', label: 'Doctor Consultation', icon: '🩺', onPress: () => navigation.navigate('DoctorConsultation') },
         { key: 'lab', label: 'Lab Test', icon: '🧪', onPress: () => navigation.navigate('LabTest') },
         { key: 'delivery', label: 'Medication Delivery', icon: '🚚', onPress: () => navigation.navigate('MedicationDelivery') },
         { key: 'otc', label: 'Buy OTC', icon: '🛒', onPress: () => navigation.navigate('BuyOTC') },
+        { key: 'vaccine', label: 'Vaccination', icon: '💉', onPress: () => navigation.navigate('Vaccination') },
+        { key: 'mental', label: 'Mental Health', icon: '🧠', onPress: () => navigation.navigate('MentalHealth') },
+        { key: 'physical', label: 'Physical Therapy', icon: '🏃‍♂️', onPress: () => navigation.navigate('PhysicalTherapy') },
+        { key: 'nutrition', label: 'Nutrition Consult', icon: '🥗', onPress: () => navigation.navigate('NutritionConsult') },
     ];
 
     const appointments = [
         { id: 'a1', name: 'Dr John Doe', role: 'General', time: 'Today, 7:00 PM', status: 'Confirmed', avatar: AVATAR_1 },
         { id: 'a2', name: 'Dr John Doe', role: 'Cardiologist', time: 'Today, 10:30 AM', status: 'Confirmed', avatar: AVATAR_2 },
         { id: 'a3', name: 'Dr John Doe', role: 'Cardiologist', time: 'Today, 10:30 AM', status: 'Confirmed', avatar: AVATAR_3 },
+        { id: 'a4', name: 'Dr Jane Smith', role: 'Dermatologist', time: 'Tomorrow, 9:00 AM', status: 'Confirmed', avatar: AVATAR_1 },
+        { id: 'a5', name: 'Dr Mike Johnson', role: 'Neurologist', time: 'Tomorrow, 2:00 PM', status: 'Pending', avatar: AVATAR_2 },
+        { id: 'a6', name: 'Dr Sarah Wilson', role: 'Pediatrician', time: 'Tomorrow, 4:30 PM', status: 'Confirmed', avatar: AVATAR_3 },
     ];
 
     const deliveries = [
         { id: 'ORD-2024-001', eta: 'Arriving today, 2:00 PM', status: 'In Transit', progress: 0.65 },
         { id: 'ORD-2024-002', eta: 'Arriving today, 4:00 PM', status: 'In Transit', progress: 0.35 },
+        { id: 'ORD-2024-003', eta: 'Arriving tomorrow, 10:00 AM', status: 'Shipped', progress: 0.25 },
+        { id: 'ORD-2024-004', eta: 'Arriving tomorrow, 3:00 PM', status: 'Shipped', progress: 0.15 },
+        { id: 'ORD-2024-005', eta: 'Arriving in 2 days, 11:00 AM', status: 'Processing', progress: 0.10 },
     ];
 
     // Handler functions for "View All" buttons
     const handleViewAllServices = () => {
-        navigation.navigate('Services');
+        setShowAllServices(!showAllServices);
     };
 
     const handleViewAllAppointments = () => {
-        navigation.navigate('Appointments');
+        setShowAllAppointments(!showAllAppointments);
     };
 
     const handleViewAllDeliveries = () => {
-        navigation.navigate('Deliveries');
+        setShowAllDeliveries(!showAllDeliveries);
     };
 
     const handleAIAgents = () => {
@@ -122,12 +139,12 @@ export default function Home() {
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Book a Service</Text>
                     <Pressable hitSlop={8} onPress={handleViewAllServices}>
-                        <Text style={styles.link}>View All</Text>
+                        <Text style={styles.link}>{showAllServices ? 'Show Less' : 'View All'}</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.servicesGrid}>
-                    {services.map((s) => (
+                    {(showAllServices ? services : services.slice(0, 4)).map((s) => (
                         <Pressable key={s.key} style={styles.serviceTile} onPress={s.onPress}>
                             <View style={styles.serviceIconContainer}>
                                 <Text style={styles.serviceEmoji}>{s.icon}</Text>
@@ -141,12 +158,12 @@ export default function Home() {
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Upcoming Appointments</Text>
                     <Pressable hitSlop={8} onPress={handleViewAllAppointments}>
-                        <Text style={styles.link}>View All</Text>
+                        <Text style={styles.link}>{showAllAppointments ? 'Show Less' : 'View All'}</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.appointmentsList}>
-                    {appointments.map((item) => (
+                    {(showAllAppointments ? appointments : appointments.slice(0, 4)).map((item) => (
                         <Pressable
                             key={item.id}
                             style={styles.appointmentCard}
@@ -172,12 +189,12 @@ export default function Home() {
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Track My Deliveries</Text>
                     <Pressable hitSlop={8} onPress={handleViewAllDeliveries}>
-                        <Text style={styles.link}>View All</Text>
+                        <Text style={styles.link}>{showAllDeliveries ? 'Show Less' : 'View All'}</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.deliveriesList}>
-                    {deliveries.map((d, idx) => (
+                    {(showAllDeliveries ? deliveries : deliveries.slice(0, 4)).map((d, idx) => (
                         <Pressable
                             key={`${d.id}-${idx}`}
                             style={styles.deliveryCard}
@@ -228,15 +245,15 @@ const styles = StyleSheet.create({
     },
     watermark: {
         position: 'absolute',
-        // top: '20%',
-        // left: '50%',
-        transform: [{ translateX: -100 }, { translateY: -100 }],
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         pointerEvents: 'none',
         opacity: 0.03,
-        // width: 200,
-        // height: 200,
-        height: '100vh',
-        width: '100%'
+        width: screenWidth,
+        height: screenHeight,
+        backgroundColor: 'red'
     },
 
     scroll: {
