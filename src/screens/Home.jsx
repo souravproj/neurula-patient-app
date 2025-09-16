@@ -43,7 +43,7 @@ export default function Home() {
     ];
 
     const appointments = [
-        { id: 'a1', name: 'Dr John Doe', role: 'General', time: 'Today, 7:00 PM', status: 'Confirmed', avatar: AVATAR_1 },
+        { id: 'a1', name: 'Dr Michael Chen', role: 'General Physician', time: 'Today, 7:00 PM', status: 'Confirmed', avatar: AVATAR_1 },
         { id: 'a2', name: 'Dr John Doe', role: 'Cardiologist', time: 'Today, 10:30 AM', status: 'Confirmed', avatar: AVATAR_2 },
         { id: 'a3', name: 'Dr John Doe', role: 'Cardiologist', time: 'Today, 10:30 AM', status: 'Confirmed', avatar: AVATAR_3 },
         { id: 'a4', name: 'Dr Jane Smith', role: 'Dermatologist', time: 'Tomorrow, 9:00 AM', status: 'Confirmed', avatar: AVATAR_1 },
@@ -53,7 +53,7 @@ export default function Home() {
 
     const deliveries = [
         { id: 'ORD-2024-001', eta: 'Arriving today, 2:00 PM', status: 'In Transit', progress: 0.65 },
-        { id: 'ORD-2024-002', eta: 'Arriving today, 4:00 PM', status: 'In Transit', progress: 0.35 },
+        { id: 'ORD-2024-001', eta: 'Arriving today, 2:00 PM', status: 'In Transit', progress: 0.35 },
         { id: 'ORD-2024-003', eta: 'Arriving tomorrow, 10:00 AM', status: 'Shipped', progress: 0.25 },
         { id: 'ORD-2024-004', eta: 'Arriving tomorrow, 3:00 PM', status: 'Shipped', progress: 0.15 },
         { id: 'ORD-2024-005', eta: 'Arriving in 2 days, 11:00 AM', status: 'Processing', progress: 0.10 },
@@ -163,7 +163,7 @@ export default function Home() {
                 </View>
 
                 <View style={styles.appointmentsList}>
-                    {(showAllAppointments ? appointments : appointments.slice(0, 4)).map((item) => (
+                    {(showAllAppointments ? appointments : appointments.slice(0, 3)).map((item) => (
                         <Pressable
                             key={item.id}
                             style={styles.appointmentCard}
@@ -194,14 +194,19 @@ export default function Home() {
                 </View>
 
                 <View style={styles.deliveriesList}>
-                    {(showAllDeliveries ? deliveries : deliveries.slice(0, 4)).map((d, idx) => (
+                    {(showAllDeliveries ? deliveries : deliveries.slice(0, 2)).map((d, idx) => (
                         <Pressable
                             key={`${d.id}-${idx}`}
                             style={styles.deliveryCard}
                             onPress={() => navigation.navigate('DeliveryTracking', { orderId: d.id })}
                         >
                             <View style={styles.deliveryHeader}>
-                                <Text style={styles.orderId}>{d.id}</Text>
+                                <View style={styles.deliveryOrderInfo}>
+                                    <View style={styles.orderIcon}>
+                                        <Text style={styles.orderIconText}>📦</Text>
+                                    </View>
+                                    <Text style={styles.orderId}>{d.id}</Text>
+                                </View>
                                 <View style={styles.deliveryStatusBadge}>
                                     <Text style={styles.deliveryStatusText}>{d.status}</Text>
                                 </View>
@@ -241,7 +246,7 @@ export default function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#f8f9fa'
+        backgroundColor: '#FAFBFC',
     },
     watermark: {
         position: 'absolute',
@@ -253,7 +258,6 @@ const styles = StyleSheet.create({
         opacity: 0.03,
         width: screenWidth,
         height: screenHeight,
-        backgroundColor: 'red'
     },
 
     scroll: {
@@ -275,18 +279,19 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     hello: {
-        fontFamily: 'Poppins-Regular',
-        color: colors.textLight,
+        fontFamily: 'Inter_400Regular',
+        fontWeight: '400',
+        color: '#64748B',
         marginBottom: 4,
         fontSize: 16,
         lineHeight: 24,
     },
     userName: {
-        fontFamily: 'Poppins-Bold',
-        color: colors.text,
+        fontFamily: 'Inter_700Bold',
+        fontWeight: '700',
+        color: '#1E293B',
         fontSize: 24,
         lineHeight: 32,
-        fontWeight: '700',
     },
     headerActions: {
         flexDirection: 'row',
@@ -309,10 +314,6 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 2,
     },
-    aiAgentsButton: {
-        backgroundColor: 'rgba(143, 0, 255, 0.1)',
-        borderColor: colors.primary,
-    },
     iconTxt: {
         fontSize: 20,
         lineHeight: 20,
@@ -332,7 +333,8 @@ const styles = StyleSheet.create({
         paddingLeft: spacing.xl,
         paddingRight: spacing.xl * 2.5,
         color: colors.text,
-        fontFamily: 'Poppins-Regular',
+        fontFamily: 'Inter_400Regular',
+        fontWeight: '400',
         fontSize: 16,
         lineHeight: 24,
     },
@@ -372,11 +374,11 @@ const styles = StyleSheet.create({
         marginBottom: spacing.md,
     },
     cardTitle: {
-        fontFamily: 'Poppins-SemiBold',
-        color: colors.text,
+        fontFamily: 'Inter_600SemiBold',
+        fontWeight: '600',
+        color: '#1E293B',
         fontSize: 18,
         lineHeight: 24,
-        fontWeight: '600',
     },
     cardArrow: {
         fontSize: 28,
@@ -398,8 +400,9 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     progressNote: {
-        fontFamily: 'Poppins-Regular',
-        color: colors.textLight,
+        fontFamily: 'Inter_400Regular',
+        fontWeight: '400',
+        color: '#64748B',
         fontSize: 14,
         lineHeight: 20,
     },
@@ -413,18 +416,18 @@ const styles = StyleSheet.create({
         paddingHorizontal: 2,
     },
     sectionTitle: {
-        fontFamily: 'Poppins-Bold',
-        color: colors.text,
+        fontFamily: 'Inter_700Bold',
+        fontWeight: '700',
+        color: '#1E293B',
         fontSize: 20,
         lineHeight: 28,
-        fontWeight: '700',
     },
     link: {
-        fontFamily: 'Poppins-Medium',
+        fontFamily: 'Inter_500Medium',
+        fontWeight: '500',
         color: colors.primary,
         fontSize: 14,
         lineHeight: 20,
-        fontWeight: '500',
     },
 
     /* services grid */
@@ -465,12 +468,12 @@ const styles = StyleSheet.create({
         lineHeight: 26
     },
     serviceLabel: {
-        fontFamily: 'Poppins-Medium',
-        color: colors.text,
+        fontFamily: 'Inter_500Medium',
+        fontWeight: '500',
+        color: '#1E293B',
         textAlign: 'center',
         fontSize: 14,
         lineHeight: 20,
-        fontWeight: '500',
     },
 
     /* appointments */
@@ -502,16 +505,17 @@ const styles = StyleSheet.create({
         flex: 1
     },
     doctorName: {
-        fontFamily: 'Poppins-SemiBold',
-        color: colors.text,
+        fontFamily: 'Inter_600SemiBold',
+        fontWeight: '600',
+        color: '#1E293B',
         fontSize: 16,
         lineHeight: 22,
-        fontWeight: '600',
         marginBottom: 2,
     },
     doctorRole: {
-        fontFamily: 'Poppins-Regular',
-        color: colors.textLight,
+        fontFamily: 'Inter_400Regular',
+        fontWeight: '400',
+        color: '#64748B',
         fontSize: 14,
         lineHeight: 20,
         marginBottom: 4,
@@ -521,25 +525,26 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     appointmentTime: {
-        fontFamily: 'Poppins-Regular',
-        color: colors.textLight,
+        fontFamily: 'Inter_400Regular',
+        fontWeight: '400',
+        color: '#64748B',
         fontSize: 12,
         lineHeight: 16,
         marginBottom: spacing.xs,
     },
 
     statusBadge: {
-        paddingHorizontal: spacing.sm,
+        paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 12,
-        backgroundColor: 'rgba(46, 204, 113, 0.15)',
+        backgroundColor: '#DCFCE7',
     },
     statusText: {
-        fontFamily: 'Poppins-Medium',
-        color: '#2ecc71',
+        fontFamily: 'Inter_500Medium',
+        fontWeight: '500',
+        color: '#16A34A',
         fontSize: 12,
         lineHeight: 16,
-        fontWeight: '500',
     },
 
     /* deliveries */
@@ -565,32 +570,52 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: spacing.sm,
     },
+    deliveryOrderInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    orderIcon: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: 'rgba(107, 114, 128, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: spacing.sm,
+    },
+    orderIconText: {
+        fontSize: 16,
+        lineHeight: 16,
+    },
     orderId: {
-        fontFamily: 'Poppins-SemiBold',
-        color: colors.text,
+        fontFamily: 'Inter_600SemiBold',
+        fontWeight: '600',
+        color: '#1E293B',
         fontSize: 16,
         lineHeight: 22,
-        fontWeight: '600',
     },
     deliveryStatusBadge: {
-        paddingHorizontal: spacing.sm,
+        paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 12,
-        backgroundColor: 'rgba(155, 89, 182, 0.15)',
+        backgroundColor: '#F3E8FF',
     },
     deliveryStatusText: {
-        fontFamily: 'Poppins-Medium',
-        color: '#9b59b6',
+        fontFamily: 'Inter_500Medium',
+        fontWeight: '500',
+        color: '#9333EA',
         fontSize: 12,
         lineHeight: 16,
-        fontWeight: '500',
     },
     etaText: {
-        fontFamily: 'Poppins-Regular',
-        color: colors.textLight,
+        fontFamily: 'Inter_400Regular',
+        fontWeight: '400',
+        color: '#64748B',
         fontSize: 14,
         lineHeight: 20,
         marginBottom: spacing.md,
+        // marginLeft: 40, // Align with order ID text
     },
 
     deliveryProgressBar: {
@@ -598,6 +623,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(143, 0, 255, 0.1)',
         borderRadius: 6,
         overflow: 'hidden',
+        // marginLeft: 40, // Align with order ID text
     },
     deliveryProgressFill: {
         height: '100%',
