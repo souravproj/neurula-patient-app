@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F1F5F9',
         borderRadius: 12,
         paddingHorizontal: 16,
-        paddingVertical: 14,
+        paddingVertical: 2,
         borderWidth: 1,
         borderColor: '#E2E8F0',
     },
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 20,
-        paddingTop: 24,
+        // paddingTop: 24,
         paddingBottom: 16,
         backgroundColor: '#F8FAFC',
     },
@@ -324,9 +324,11 @@ const styles = StyleSheet.create({
     doctorsScroll: {
         flex: 1,
         backgroundColor: '#F8FAFC',
+        marginBottom: 40
     },
     doctorsContent: {
         padding: 20,
+        // marginBottom: 200
     },
 
     // Doctor Card Styles
@@ -334,7 +336,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderRadius: 16,
         // padding: 20,
-        paddingBottom: 20,
+        // paddingBottom: 20,
         paddingTop: 20,
         paddingInlineStart: 0,
         paddingInlineEnd: 20,
@@ -352,7 +354,7 @@ const styles = StyleSheet.create({
     },
     doctorHeader: {
         flexDirection: 'row',
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     doctorAvatar: {
         width: '35%',
@@ -401,6 +403,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        marginTop: 10,
+        marginBottom: 10
     },
     doctorPrice: {
         fontSize: 14,
@@ -410,8 +414,8 @@ const styles = StyleSheet.create({
     bookButton: {
         backgroundColor: '#8B5CF6',
         paddingHorizontal: 14,
-        paddingVertical: 12,
-        borderRadius: 25,
+        paddingVertical: 8,
+        borderRadius: 16,
         shadowColor: '#8B5CF6',
         shadowOffset: {
             width: 0,
@@ -423,7 +427,7 @@ const styles = StyleSheet.create({
     },
     bookButtonText: {
         color: '#FFFFFF',
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '600',
     },
 });
