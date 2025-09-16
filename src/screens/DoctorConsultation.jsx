@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather'; // or your preferred icon library
+import Header from '../components/Header';
 
 // You'll need to add these doctor images to your assets
 const DOC1 = require('../../assets/doc1.png');
@@ -132,20 +133,14 @@ export default function DoctorConsultation() {
     return (
         <SafeAreaView style={styles.container}>
             {/* Header */}
-            <View style={styles.header}>
-                <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Icon name="chevron-left" size={24} color="#1F2937" />
-                </Pressable>
-                <Text style={styles.headerTitle}>Dr Consultation</Text>
-                <View style={styles.headerRight}>
-                    <Pressable style={styles.headerIcon}>
-                        <Icon name="bell" size={22} color="#1F2937" />
-                    </Pressable>
-                    <Pressable style={styles.headerIcon}>
-                        <Icon name="menu" size={22} color="#1F2937" />
-                    </Pressable>
-                </View>
-            </View>
+            <Header
+                variant="standard"
+                title="Dr Consultation"
+                leftIcon="back"
+                onLeftPress={() => navigation.goBack()}
+                onNotificationPress={() => navigation.navigate('Notifications')}
+                onMenuPress={() => navigation.toggleDrawer?.()}
+            />
 
             {/* Search Bar */}
             <View style={styles.searchContainer}>
@@ -205,45 +200,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#F8FAFC',
     },
 
-    // Header Styles
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        backgroundColor: '#FFFFFF',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    backButton: {
-        padding: 4,
-        width: 32,
-    },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#1F2937',
-        flex: 1,
-        textAlign: 'center',
-        marginHorizontal: 16,
-    },
-    headerRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: 80,
-        justifyContent: 'flex-end',
-    },
-    headerIcon: {
-        padding: 4,
-        marginLeft: 12,
-    },
 
     // Search Styles
     searchContainer: {

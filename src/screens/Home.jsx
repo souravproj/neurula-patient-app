@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing } from '../theme';
+import Header from '../components/Header';
 
 // Soft background art (same pattern as other screens)
 const BG_WATERMARK = require('../../assets/background.png');
@@ -80,6 +81,15 @@ export default function Home() {
             {/* background watermark */}
             <Image source={BG_WATERMARK} style={styles.watermark} resizeMode="contain" />
 
+            {/* Header */}
+            <Header
+                variant="home"
+                greeting="Good Morning,"
+                userName="Ahmed Al-Rashid"
+                onNotificationPress={() => navigation.navigate('Notifications')}
+                onMenuPress={() => navigation.toggleDrawer?.()}
+            />
+
             <ScrollView
                 contentContainerStyle={[
                     styles.scroll,
@@ -91,22 +101,6 @@ export default function Home() {
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
-                {/* Header */}
-                <View style={styles.headerRow}>
-                    <View style={styles.headerLeft}>
-                        <Text style={styles.hello}>Good Morning,</Text>
-                        <Text style={styles.userName}>Ahmed Al-Rashid</Text>
-                    </View>
-
-                    <View style={styles.headerActions}>
-                        <Pressable style={styles.iconCircle} onPress={() => navigation.navigate('Notifications')}>
-                            <Text style={styles.iconTxt}>🔔</Text>
-                        </Pressable>
-                        <Pressable style={styles.iconCircle} onPress={() => navigation.toggleDrawer?.()}>
-                            <Text style={styles.iconTxt}>☰</Text>
-                        </Pressable>
-                    </View>
-                </View>
 
                 {/* Search */}
                 <View style={styles.searchWrap}>
@@ -265,57 +259,6 @@ const styles = StyleSheet.create({
         // paddingBottom will be set dynamically in the component
     },
 
-    /* header */
-    headerRow: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        marginBottom: spacing.xl,
-        paddingTop: spacing.sm,
-    },
-    headerLeft: {
-        flex: 1,
-    },
-    hello: {
-        fontFamily: 'Poppins_400Regular',
-        fontWeight: '400',
-        color: '#64748B',
-        marginBottom: 4,
-        fontSize: 16,
-        lineHeight: 24,
-    },
-    userName: {
-        fontFamily: 'Poppins_700Bold',
-        fontWeight: '700',
-        color: '#1E293B',
-        fontSize: 24,
-        lineHeight: 32,
-    },
-    headerActions: {
-        flexDirection: 'row',
-        gap: spacing.sm,
-        marginTop: 4,
-        alignItems: 'center',
-    },
-    iconCircle: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: colors.background,
-        borderWidth: 1,
-        borderColor: colors.borderGradient,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: colors.shadowGlass,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    iconTxt: {
-        fontSize: 20,
-        lineHeight: 20,
-    },
 
     /* search */
     searchWrap: {

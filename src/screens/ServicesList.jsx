@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { colors, typography, spacing } from '../theme';
+import Header from '../components/Header';
 
 // placeholders — replace with your real assets
 const BG_WATERMARK = require('../../assets/background.png');
@@ -38,22 +39,14 @@ export default function ServicesList() {
         <SafeAreaView style={styles.container}>
             <Image source={BG_WATERMARK} style={styles.watermark} resizeMode="cover" />
 
-            <View style={styles.header}>
-                <Pressable onPress={handleBack} hitSlop={10} style={styles.headerLeft}>
-                    <Text style={styles.backIcon}>‹</Text>
-                </Pressable>
-
-                <Text style={styles.headerTitle}>Book a Service</Text>
-
-                <View style={styles.headerRight}>
-                    <TouchableOpacity style={styles.iconCircle}>
-                        <Text style={styles.iconText}>🔔</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.iconCircle, { marginLeft: spacing.sm }]}>
-                        <Text style={styles.iconText}>≡</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            <Header
+                variant="standard"
+                title="Book a Service"
+                leftIcon="back"
+                onLeftPress={handleBack}
+                onNotificationPress={() => navigation.navigate('Notifications')}
+                onMenuPress={() => navigation.toggleDrawer?.()}
+            />
 
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -104,59 +97,6 @@ const styles = StyleSheet.create({
         pointerEvents: 'none',
     },
 
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        paddingBottom: 24,
-        backgroundColor: 'transparent',
-    },
-    headerLeft: {
-        width: 32,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        height: 32,
-    },
-    backIcon: {
-        fontSize: 24,
-        color: '#2D2D2D',
-        fontWeight: '400',
-    },
-
-    headerTitle: {
-        flex: 1,
-        textAlign: 'left',
-        fontSize: 20,
-        fontWeight: '600',
-        color: '#2D2D2D',
-        marginLeft: 12,
-    },
-
-    headerRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-
-    iconCircle: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        borderWidth: 0.5,
-        borderColor: 'rgba(0, 0, 0, 0.08)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 4,
-        elevation: 1,
-    },
-    iconText: {
-        fontSize: 14,
-        color: '#666',
-    },
 
     scrollContent: {
         paddingHorizontal: 20,
