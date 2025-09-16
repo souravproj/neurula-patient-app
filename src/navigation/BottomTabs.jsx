@@ -2,11 +2,14 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing, typography } from '../theme';
 
 // Screens (swap placeholders with real ones)
 import Home from '../screens/Home';
+import ServicesList from '../screens/ServicesList';
+import DoctorConsultation from '../screens/DoctorConsultation';
 const Booking = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
 const Inbox = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
 const Profile = () => <View style={{ flex: 1, backgroundColor: colors.background }} />;
@@ -37,6 +40,21 @@ const TAB_ICONS = {
 };
 
 const Tab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
+
+function HomeStackNavigator() {
+    return (
+        <HomeStack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <HomeStack.Screen name="HomeMain" component={Home} />
+            <HomeStack.Screen name="ServicesList" component={ServicesList} />
+            <HomeStack.Screen name="DoctorConsultation" component={DoctorConsultation} />
+        </HomeStack.Navigator>
+    );
+}
 
 export default function BottomTabs() {
     return (
@@ -48,7 +66,7 @@ export default function BottomTabs() {
             }}
             tabBar={(props) => <CurvedTabBar {...props} />}
         >
-            <Tab.Screen name="Home" component={Home} />
+            <Tab.Screen name="Home" component={HomeStackNavigator} />
             <Tab.Screen name="Booking" component={Booking} />
             {/* Hidden route for the center FAB */}
             <Tab.Screen name="QuickAction" component={QuickAction} options={{ tabBarButton: () => null }} />

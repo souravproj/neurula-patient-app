@@ -27,7 +27,6 @@ export default function Home() {
     const navigation = useNavigation();
     const insets = useSafeAreaInsets();
 
-    const [showAllServices, setShowAllServices] = useState(false);
     const [showAllAppointments, setShowAllAppointments] = useState(false);
     const [showAllDeliveries, setShowAllDeliveries] = useState(false);
 
@@ -61,7 +60,7 @@ export default function Home() {
 
     // Handler functions for "View All" buttons
     const handleViewAllServices = () => {
-        setShowAllServices(!showAllServices);
+        navigation.navigate('ServicesList');
     };
 
     const handleViewAllAppointments = () => {
@@ -139,12 +138,12 @@ export default function Home() {
                 <View style={styles.sectionHead}>
                     <Text style={styles.sectionTitle}>Book a Service</Text>
                     <Pressable hitSlop={8} onPress={handleViewAllServices}>
-                        <Text style={styles.link}>{showAllServices ? 'Show Less' : 'View All'}</Text>
+                        <Text style={styles.link}>View All</Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.servicesGrid}>
-                    {(showAllServices ? services : services.slice(0, 4)).map((s) => (
+                    {services.slice(0, 4).map((s) => (
                         <Pressable key={s.key} style={styles.serviceTile} onPress={s.onPress}>
                             <View style={styles.serviceIconContainer}>
                                 <Text style={styles.serviceEmoji}>{s.icon}</Text>
@@ -259,7 +258,6 @@ const styles = StyleSheet.create({
         width: screenWidth,
         height: screenHeight,
     },
-
     scroll: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
@@ -279,7 +277,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     hello: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_400Regular',
         fontWeight: '400',
         color: '#64748B',
         marginBottom: 4,
@@ -287,7 +285,7 @@ const styles = StyleSheet.create({
         lineHeight: 24,
     },
     userName: {
-        fontFamily: 'Inter_700Bold',
+        fontFamily: 'Poppins_700Bold',
         fontWeight: '700',
         color: '#1E293B',
         fontSize: 24,
@@ -333,7 +331,7 @@ const styles = StyleSheet.create({
         paddingLeft: spacing.xl,
         paddingRight: spacing.xl * 2.5,
         color: colors.text,
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_400Regular',
         fontWeight: '400',
         fontSize: 16,
         lineHeight: 24,
@@ -374,7 +372,7 @@ const styles = StyleSheet.create({
         marginBottom: spacing.md,
     },
     cardTitle: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '600',
         color: '#1E293B',
         fontSize: 18,
@@ -400,7 +398,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     progressNote: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_400Regular',
         fontWeight: '400',
         color: '#64748B',
         fontSize: 14,
@@ -416,14 +414,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 2,
     },
     sectionTitle: {
-        fontFamily: 'Inter_700Bold',
+        fontFamily: 'Poppins_700Bold',
         fontWeight: '700',
         color: '#1E293B',
         fontSize: 20,
         lineHeight: 28,
     },
     link: {
-        fontFamily: 'Inter_500Medium',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '500',
         color: colors.primary,
         fontSize: 14,
@@ -468,7 +466,7 @@ const styles = StyleSheet.create({
         lineHeight: 26
     },
     serviceLabel: {
-        fontFamily: 'Inter_500Medium',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '500',
         color: '#1E293B',
         textAlign: 'center',
@@ -505,7 +503,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     doctorName: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '600',
         color: '#1E293B',
         fontSize: 16,
@@ -513,7 +511,7 @@ const styles = StyleSheet.create({
         marginBottom: 2,
     },
     doctorRole: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_400Regular',
         fontWeight: '400',
         color: '#64748B',
         fontSize: 14,
@@ -525,7 +523,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     appointmentTime: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_400Regular',
         fontWeight: '400',
         color: '#64748B',
         fontSize: 12,
@@ -540,7 +538,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#DCFCE7',
     },
     statusText: {
-        fontFamily: 'Inter_500Medium',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '500',
         color: '#16A34A',
         fontSize: 12,
@@ -589,7 +587,7 @@ const styles = StyleSheet.create({
         lineHeight: 16,
     },
     orderId: {
-        fontFamily: 'Inter_600SemiBold',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '600',
         color: '#1E293B',
         fontSize: 16,
@@ -602,14 +600,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#F3E8FF',
     },
     deliveryStatusText: {
-        fontFamily: 'Inter_500Medium',
+        fontFamily: 'Poppins_500Medium',
         fontWeight: '500',
         color: '#9333EA',
         fontSize: 12,
         lineHeight: 16,
     },
     etaText: {
-        fontFamily: 'Inter_400Regular',
+        fontFamily: 'Poppins_400Regular',
         fontWeight: '400',
         color: '#64748B',
         fontSize: 14,
